@@ -11,8 +11,8 @@ export default defineNuxtConfig({
     oauth: {
       // provider in lowercase (github, google, etc.)
       yandex: {
-        clientId: 'a53de23a5cf748f2a95027c42892f88b',
-        clientSecret: 'ff81865a37e44f8bbaa9bfbdedd02d48'
+        clientId: process.env.YANDEX_CLIENT_ID,
+        clientSecret:  process.env.YANDEX_CLIENT_SECRET
       }
     }
   }
