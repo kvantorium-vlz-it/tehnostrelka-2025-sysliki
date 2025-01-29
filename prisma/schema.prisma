@@ -16,8 +16,63 @@ datasource db {
 model User {
   id    Int     @unique
   name  String?
+  userAdmin UserAdmin?
+  route Route[]
+}
+
+model UserAdmin{
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [user_id],  references: [id])
+  user_id Int @unique
 }
 
 
+model Route{
+  id Int @id @default(autoincrement())
+  creater_id Int 
+  name String
+  descripsion String
+  created_at DateTime
+  // updated_at DateTime
+  private Boolean
+  approved Boolean
+  user User @relation(fields: [creater_id],references: [id])
+  roultePlace RoultePlace[]
+  route_image RouteImage[]
+}
+
+model RoultePlace{
+  id Int @id @default(autoincrement())
+  name String?
+  description String?
+  routed_id Int
+  lat Float
+  lot Float
+  route Route @relation(fields: [routed_id],references: [id])
+  route_place_image RoutePlaceImage[]
+}
+
+model RoutePlaceImage{
+  id Int @id @default(autoincrement())
+  image_id Int @unique
+  route_place_id Int
+  route_place RoultePlace @relation(fields: [route_place_id],references: [id])
+  image Image @relation(fields: [image_id], references: [id])
+}
+
+model Image{
+  id Int @id @default(autoincrement())
+  alt String?
+  src String
+  route_place_image RoutePlaceImage?
+  route_image RouteImage?
+}
 
 
+model RouteImage{
+  id Int @id @default(autoincrement())
+  route_id Int
+  image_id Int @unique
+  route Route  @relation(fields: [route_id], references: [id])
+  image Image @relation(fields: [image_id], references: [id])
+}
