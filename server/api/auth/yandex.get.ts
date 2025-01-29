@@ -1,3 +1,6 @@
+import prisma  from "@/lib/prisma";
+
+
 export default defineOAuthYandexEventHandler({
     config: {
         // emailRequired: true,
@@ -11,6 +14,22 @@ export default defineOAuthYandexEventHandler({
             },
             loggedInAt: new Date()
         })
+      if (!await prisma.user.findUnique({
+        where:{
+            id:+user.id
+        }
+      })) {
+        
+     
+        await prisma.user.create({
+            data:{
+                id:+user.id,
+                name:user.login,
+                email:user.default_email
+                
+            }
+        })
+        }
 
         // console.log('logged in')
 
