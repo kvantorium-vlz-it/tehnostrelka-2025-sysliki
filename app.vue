@@ -8,7 +8,7 @@
 
 <template>
   <div v-if="loggedIn">
-    <h1>Welcome {{ user?.username}}!</h1>
+    <h1>Welcome {{ user?.real_name}}!</h1>
     <p>Logged in since {{ session.loggedInAt  }}    </p>
     <div>
           loggedIn: <pre>{{ JSON.stringify(loggedIn) }}</pre>

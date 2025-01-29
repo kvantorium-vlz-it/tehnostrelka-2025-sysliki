@@ -5,28 +5,27 @@ export default defineOAuthYandexEventHandler({
     config: {
         // emailRequired: true,
     },
+    
     async onSuccess(event, { user, tokens }) {
         await setUserSession(event, {
             user: {
                 yandexId: user.id,
                 username: user.login,
-                ...user,
+                
             },
             loggedInAt: new Date()
         })
-      if (!await prisma.user.findUnique({
-        where:{
-            id:+user.id
-        }
-      })) {
-        
-     
+
+        const existeduser = await prisma.user.findUnique({
+            where:{
+                id:+user.id
+            }
+        })
+      if (!existeduser) {
         await prisma.user.create({
             data:{
                 id:+user.id,
-                name:user.login,
-                email:user.default_email
-                
+                name:user.login
             }
         })
         }
