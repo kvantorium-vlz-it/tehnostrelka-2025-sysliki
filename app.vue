@@ -2,11 +2,12 @@
   const { loggedIn, user, session, fetch, clear } = useUserSession()
 
 
-
-
 </script>
 
 <template>
+
+
+ 
   <div v-if="loggedIn">
     <h1>Welcome {{ user?.real_name}}!</h1>
     <p>Logged in since {{ session.loggedInAt  }}    </p>
