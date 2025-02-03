@@ -4,7 +4,7 @@ import type { User } from "@prisma/client"
 export const guest = defineAbility({ allowGuest: true }, (user: User | null) => true) //гостевой режим
 
 
-export const authsUsert = defineAbility(() => true) 
+export const authsUser = defineAbility(() => true) 
 
 
 export const createrRoutes = defineAbility((user:User , post: Post) => {

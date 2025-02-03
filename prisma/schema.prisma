@@ -16,7 +16,7 @@ datasource db {
 model User {
   id    Int     @unique
   name  String?
-  userAdmin UserAdmin?
+  user_admin UserAdmin?
   route Route[]
 }
 
@@ -35,7 +35,7 @@ model Route{
   created_at DateTime
   // updated_at DateTime
   private Boolean
-  approved Boolean
+  approved Boolean?
   user User @relation(fields: [creater_id],references: [id])
   roultePlace RoultePlace[]
   route_image RouteImage[]
