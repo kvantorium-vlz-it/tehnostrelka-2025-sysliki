@@ -1,4 +1,6 @@
 import prisma  from "@/lib/prisma";
+import { user } from "~/use.vue";
+
 
 
   
@@ -10,8 +12,11 @@ export default defineOAuthYandexEventHandler({
     async onSuccess(event, { user, tokens }) {
         await setUserSession(event, {
             user: {
+                
+                real_name: user.real_name,
                 yandexId: user.id,
                 username: user.login,
+                
                 is_admin: !! await prisma.userAdmin.findUnique({
                     where:{
                         id:+user.id

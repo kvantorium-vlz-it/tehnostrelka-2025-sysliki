@@ -106,12 +106,12 @@ model Moder {
   user  User  @relation(fields: [user_id], references: [id]) 
 } 
  
-model Coments { 
+model Coments { //надо периписать на Coment
   id         Int      @id @default(autoincrement()) 
   route_id   Int 
   text       String 
   user_id    Int 
-  created_at DateTime 
+  created_at DateTime @default(now())
  
   route Route @relation(fields: [route_id], references: [id]) 
   user  User  @relation(fields: [user_id], references: [id]) 
@@ -131,7 +131,7 @@ model Visited {
   id         Int      @id @default(autoincrement()) 
   route_id   Int      @unique 
   user_id    Int      @unique 
-  visited_at DateTime 
+  visited_at DateTime @default(now())
  
   route Route @relation(fields: [route_id], references: [id]) 
   user  User  @relation(fields: [user_id], references: [id]) 

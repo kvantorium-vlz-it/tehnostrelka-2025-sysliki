@@ -1,9 +1,9 @@
 import { routes } from "vue-router/auto-routes";
 import prisma from "~/lib/prisma";
+import { user } from "~/use.vue";
 
 
-
-  interface Body {
+interface Body {
     creater_id: number
     name: string
     descripsion: string
@@ -23,15 +23,17 @@ import prisma from "~/lib/prisma";
       src: string
       alt: string
     }[]
+    city: string
   }
   
   export default eventHandler(async(event)=>{ 
     
-    const { creater_id, name, descripsion, privateRoute, approved, places, images } = await readBody<Body>(event)
+    const {city, name, descripsion, privateRoute, approved, places, images } = await readBody<Body>(event)
 
         const newRoute = await prisma.route.create({
           data: {
-            creater_id,
+            
+            creater_id:user.yandexId,
             name,
             descripsion,
             private: privateRoute || false,
@@ -72,6 +74,11 @@ import prisma from "~/lib/prisma";
               }))
 
             },
+            city: {
+              create:{
+                name:city
+              }
+            }
           },
         })
         return newRoute
