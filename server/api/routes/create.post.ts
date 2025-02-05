@@ -1,10 +1,33 @@
+import { routes } from "vue-router/auto-routes";
 import prisma from "~/lib/prisma";
 
 
-export default eventHandler(async(event)=>{ 
 
-        const { creater_id, name, descripsion, privateRoute, approved, places, route_images, route_place_images  } = await readBody(event)
+  interface Body {
+    creater_id: number
+    name: string
+    descripsion: string
+    privateRoute: boolean
+    approved: boolean
+    places: [{
+      name: string
+      descripsion: string
+      lot: number
+      lat: number
+      images: {
+        src: string
+        alt: string
+      }[]
+    }]
+    images:{
+      src: string
+      alt: string
+    }[]
+  }
+  
+  export default eventHandler(async(event)=>{ 
     
+    const { creater_id, name, descripsion, privateRoute, approved, places, images } = await readBody<Body>(event)
 
         const newRoute = await prisma.route.create({
           data: {
@@ -13,47 +36,47 @@ export default eventHandler(async(event)=>{
             descripsion,
             private: privateRoute || false,
             approved: approved || false,
+
             roulte_place: {
               create: places.map((place) => ({
-                name: place.name,
-                description: place.description,
                 lat: place.lat,
                 lot: place.lot,
-                route_place_images:{
-                    image: {
-                        create:route_place_images.map((image) => ({
-                            alt:image.alt,
-                            src:image.src
-                        }))
+                description: place.descripsion,
+                name: place.name,
+                route_place_image:{
+
+                  create: place.images.map((image) => ({
+                    
+                    image:{
+
+                      create:{ 
+                        src: image.src,
+                        alt: image.alt,
+                      }
                     
                     }
-                }, include: {
-                    route_place_images: true
+                  }))
                 }
-
-              })),
-             
-            },
-            route_image: {
-                image: {
-                    create: route_images.map((image) => ({
-                        alt:image.alt,
-                        src:image.src
-                    }))
-                }, 
-                include: {
-                    image: true
-                }
-            },
-           
-          },
-          include: {
-            roultePlace: true,
-            route_image: true,
+                }))
+              },
             
+            
+            route_image: {
+              create: images.map((image) => ({
+                image: {
+                  create: {
+                    src: image.src,
+                    alt: image.alt,
+                  }
+                }
+              }))
+
+            },
           },
-        });
-    });
-    
+        })
+        return newRoute
+
+        
+  })
 
 
