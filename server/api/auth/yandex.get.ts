@@ -27,7 +27,7 @@ export default defineOAuthYandexEventHandler({
             }
             
         })
-      if (!existeduser || '') {
+      if (!existeduser) {
         await prisma.user.create({
             data:{
                 id:+user.id,
