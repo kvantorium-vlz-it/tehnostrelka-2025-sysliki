@@ -22,7 +22,7 @@ model User {
   rating     Rating[] 
   auditLog   AuditLog[] 
   moder      Moder[] 
-  visited    Visited? 
+  visited    Visited[]
   user_admin UserAdmin? 
 } 
  
@@ -30,7 +30,7 @@ model UserAdmin {
   id      Int @id @default(autoincrement()) 
   user_id Int @unique 
  
-  user User @relation(fields: [user_id], references: [id]) 
+  user User @relation(fields: [user_id], references: [id],onDelete: Cascade) 
 } 
  
 model Route { 
@@ -51,7 +51,7 @@ model Route {
   coments     Coments[] 
   rating      Rating[] 
   auditLog    AuditLog[] 
-  visited     Visited? 
+  visited     Visited[]
   city        City? 
 } 
  
@@ -63,7 +63,7 @@ model RoultePlace {
   lat         Float 
   lot         Float 
  
-  route Route @relation(fields: [routed_id], references: [id]) 
+  route Route @relation(fields: [routed_id], references: [id],onDelete: Cascade) 
  
   route_place_image RoutePlaceImage[] 
   auditLog          AuditLog[] 
@@ -74,7 +74,7 @@ model RoutePlaceImage {
   image_id       Int @unique 
   route_place_id Int 
  
-  route_place RoultePlace @relation(fields: [route_place_id], references: [id]) 
+  route_place RoultePlace @relation(fields: [route_place_id], references: [id],onDelete: Cascade) 
   image       Image       @relation(fields: [image_id], references: [id]) 
 } 
  
@@ -93,7 +93,7 @@ model RouteImage {
   route_id Int 
   image_id Int @unique 
  
-  route Route @relation(fields: [route_id], references: [id]) 
+  route Route @relation(fields: [route_id], references: [id],onDelete: Cascade) 
   image Image @relation(fields: [image_id], references: [id]) 
 } 
  
@@ -102,7 +102,7 @@ model Moder {
   route_id Int 
   user_id  Int 
  
-  route Route @relation(fields: [route_id], references: [id]) 
+  route Route @relation(fields: [route_id], references: [id],onDelete: Cascade) 
   user  User  @relation(fields: [user_id], references: [id]) 
 } 
  
@@ -113,7 +113,7 @@ model Coments { //надо периписать на Coment
   user_id    Int 
   created_at DateTime @default(now())
  
-  route Route @relation(fields: [route_id], references: [id]) 
+  route Route @relation(fields: [route_id], references: [id],onDelete: Cascade) 
   user  User  @relation(fields: [user_id], references: [id]) 
 } 
  
@@ -123,17 +123,17 @@ model Rating {
   user_id  Int 
   value    Int 
  
-  route Route @relation(fields: [route_id], references: [id]) 
+  route Route @relation(fields: [route_id], references: [id],onDelete: Cascade) 
   user  User  @relation(fields: [user_id], references: [id]) 
 } 
  
 model Visited { 
   id         Int      @id @default(autoincrement()) 
-  route_id   Int      @unique 
-  user_id    Int      @unique 
+  route_id   Int      
+  user_id    Int       
   visited_at DateTime @default(now())
  
-  route Route @relation(fields: [route_id], references: [id]) 
+  route Route @relation(fields: [route_id], references: [id], onDelete: Cascade) 
   user  User  @relation(fields: [user_id], references: [id]) 
 } 
  
@@ -142,7 +142,7 @@ model City {
   name     String 
   route_id Int    @unique 
  
-  route Route @relation(fields: [route_id], references: [id]) 
+  route Route @relation(fields: [route_id], references: [id],onDelete: Cascade) 
 } 
  
 model AuditLog { 
@@ -156,7 +156,7 @@ model AuditLog {
   changed_at DateTime @default(now()) 
  
   user         User        @relation(fields: [creater_id], references: [id]) 
-  route        Route       @relation(fields: [record_id], references: [id]) 
-  image        Image       @relation(fields: [record_id], references: [id]) 
-  roulte_place RoultePlace @relation(fields: [record_id], references: [id]) 
+  route        Route       @relation(fields: [record_id], references: [id],onDelete: Cascade) 
+  image        Image       @relation(fields: [record_id], references: [id],onDelete: Cascade) 
+  roulte_place RoultePlace @relation(fields: [record_id], references: [id],onDelete: Cascade) 
 }
