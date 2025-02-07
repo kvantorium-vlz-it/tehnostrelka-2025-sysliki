@@ -1,8 +1,15 @@
 -- CreateTable
+CREATE TABLE "User" (
+    "id" INTEGER NOT NULL,
+    "name" TEXT,
+    "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- CreateTable
 CREATE TABLE "UserAdmin" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "user_id" INTEGER NOT NULL,
-    CONSTRAINT "UserAdmin_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "UserAdmin_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -26,7 +33,7 @@ CREATE TABLE "RoultePlace" (
     "routed_id" INTEGER NOT NULL,
     "lat" REAL NOT NULL,
     "lot" REAL NOT NULL,
-    CONSTRAINT "RoultePlace_routed_id_fkey" FOREIGN KEY ("routed_id") REFERENCES "Route" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "RoultePlace_routed_id_fkey" FOREIGN KEY ("routed_id") REFERENCES "Route" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -34,7 +41,7 @@ CREATE TABLE "RoutePlaceImage" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "image_id" INTEGER NOT NULL,
     "route_place_id" INTEGER NOT NULL,
-    CONSTRAINT "RoutePlaceImage_route_place_id_fkey" FOREIGN KEY ("route_place_id") REFERENCES "RoultePlace" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "RoutePlaceImage_route_place_id_fkey" FOREIGN KEY ("route_place_id") REFERENCES "RoultePlace" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "RoutePlaceImage_image_id_fkey" FOREIGN KEY ("image_id") REFERENCES "Image" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -50,7 +57,7 @@ CREATE TABLE "RouteImage" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "route_id" INTEGER NOT NULL,
     "image_id" INTEGER NOT NULL,
-    CONSTRAINT "RouteImage_route_id_fkey" FOREIGN KEY ("route_id") REFERENCES "Route" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "RouteImage_route_id_fkey" FOREIGN KEY ("route_id") REFERENCES "Route" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "RouteImage_image_id_fkey" FOREIGN KEY ("image_id") REFERENCES "Image" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -59,7 +66,7 @@ CREATE TABLE "Moder" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "route_id" INTEGER NOT NULL,
     "user_id" INTEGER NOT NULL,
-    CONSTRAINT "Moder_route_id_fkey" FOREIGN KEY ("route_id") REFERENCES "Route" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "Moder_route_id_fkey" FOREIGN KEY ("route_id") REFERENCES "Route" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "Moder_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -69,8 +76,8 @@ CREATE TABLE "Coments" (
     "route_id" INTEGER NOT NULL,
     "text" TEXT NOT NULL,
     "user_id" INTEGER NOT NULL,
-    "created_at" DATETIME NOT NULL,
-    CONSTRAINT "Coments_route_id_fkey" FOREIGN KEY ("route_id") REFERENCES "Route" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "Coments_route_id_fkey" FOREIGN KEY ("route_id") REFERENCES "Route" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "Coments_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -80,7 +87,7 @@ CREATE TABLE "Rating" (
     "route_id" INTEGER NOT NULL,
     "user_id" INTEGER NOT NULL,
     "value" INTEGER NOT NULL,
-    CONSTRAINT "Rating_route_id_fkey" FOREIGN KEY ("route_id") REFERENCES "Route" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "Rating_route_id_fkey" FOREIGN KEY ("route_id") REFERENCES "Route" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "Rating_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -89,8 +96,8 @@ CREATE TABLE "Visited" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "route_id" INTEGER NOT NULL,
     "user_id" INTEGER NOT NULL,
-    "visited_at" DATETIME NOT NULL,
-    CONSTRAINT "Visited_route_id_fkey" FOREIGN KEY ("route_id") REFERENCES "Route" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    "visited_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "Visited_route_id_fkey" FOREIGN KEY ("route_id") REFERENCES "Route" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "Visited_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -99,7 +106,7 @@ CREATE TABLE "City" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "name" TEXT NOT NULL,
     "route_id" INTEGER NOT NULL,
-    CONSTRAINT "City_route_id_fkey" FOREIGN KEY ("route_id") REFERENCES "Route" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "City_route_id_fkey" FOREIGN KEY ("route_id") REFERENCES "Route" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -107,31 +114,11 @@ CREATE TABLE "AuditLog" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "table_name" TEXT NOT NULL,
     "record_id" INTEGER NOT NULL,
-    "creater_id" INTEGER NOT NULL,
-    "operation" TEXT NOT NULL,
-    "old_data" JSONB,
-    "new_data" JSONB,
-    "changed_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "AuditLog_creater_id_fkey" FOREIGN KEY ("creater_id") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "AuditLog_record_id_fkey" FOREIGN KEY ("record_id") REFERENCES "Route" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "AuditLog_record_id_fkey" FOREIGN KEY ("record_id") REFERENCES "Image" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "AuditLog_record_id_fkey" FOREIGN KEY ("record_id") REFERENCES "RoultePlace" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "operation" TEXT NOT NULL
 );
 
--- RedefineTables
-PRAGMA defer_foreign_keys=ON;
-PRAGMA foreign_keys=OFF;
-CREATE TABLE "new_User" (
-    "id" INTEGER NOT NULL,
-    "name" TEXT,
-    "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-INSERT INTO "new_User" ("id", "name") SELECT "id", "name" FROM "User";
-DROP TABLE "User";
-ALTER TABLE "new_User" RENAME TO "User";
+-- CreateIndex
 CREATE UNIQUE INDEX "User_id_key" ON "User"("id");
-PRAGMA foreign_keys=ON;
-PRAGMA defer_foreign_keys=OFF;
 
 -- CreateIndex
 CREATE UNIQUE INDEX "UserAdmin_user_id_key" ON "UserAdmin"("user_id");
@@ -141,12 +128,6 @@ CREATE UNIQUE INDEX "RoutePlaceImage_image_id_key" ON "RoutePlaceImage"("image_i
 
 -- CreateIndex
 CREATE UNIQUE INDEX "RouteImage_image_id_key" ON "RouteImage"("image_id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Visited_route_id_key" ON "Visited"("route_id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Visited_user_id_key" ON "Visited"("user_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "City_route_id_key" ON "City"("route_id");

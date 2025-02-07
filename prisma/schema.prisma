@@ -50,7 +50,7 @@ model Route {
   moder       Moder[] 
   coments     Coments[] 
   rating      Rating[] 
-  auditLog    AuditLog[] 
+  // auditLog    AuditLog[] 
   visited     Visited[]
   city        City? 
 } 
@@ -66,7 +66,7 @@ model RoultePlace {
   route Route @relation(fields: [routed_id], references: [id],onDelete: Cascade) 
  
   route_place_image RoutePlaceImage[] 
-  auditLog          AuditLog[] 
+  // auditLog          AuditLog[] 
 } 
  
 model RoutePlaceImage { 
@@ -85,7 +85,7 @@ model Image {
  
   route_place_image RoutePlaceImage? 
   route_image       RouteImage? 
-  auditLog          AuditLog[] 
+  // auditLog          AuditLog[] 
 } 
  
 model RouteImage { 
@@ -156,7 +156,7 @@ model AuditLog {
   changed_at DateTime @default(now()) 
  
   user         User        @relation(fields: [creater_id], references: [id]) 
-  route        Route       @relation(fields: [record_id], references: [id],onDelete: Cascade) 
-  image        Image       @relation(fields: [record_id], references: [id],onDelete: Cascade) 
-  roulte_place RoultePlace @relation(fields: [record_id], references: [id],onDelete: Cascade) 
+  // route        Route       @relation(fields: [record_id], references: [id],onDelete: Cascade) 
+  // image        Image       @relation(fields: [record_id], references: [id],onDelete: Cascade) 
+  // roulte_place RoultePlace @relation(fields: [record_id], references: [id],onDelete: Cascade) 
 }

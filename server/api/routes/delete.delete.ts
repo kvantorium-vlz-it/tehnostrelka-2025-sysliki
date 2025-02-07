@@ -1,7 +1,7 @@
 import { routes } from "vue-router/auto-routes";
 import prisma from "~/lib/prisma";
 import { authUser } from "~/shared/utils/abilities";
-import { user } from "~/use.vue";
+// import { user } from "~/use.vue";
 
 
 interface Body {

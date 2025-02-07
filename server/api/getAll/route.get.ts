@@ -1,9 +1,10 @@
 import prisma from "~/lib/prisma"
 import { guest } from "~/shared/utils/abilities"
-import { user } from "~/use.vue"
+// import { user } from "~/use.vue"
 
 
 export default eventHandler(async() => {
+    
     if (guest) {
         const route_public = await prisma.route.findMany({
             where:{

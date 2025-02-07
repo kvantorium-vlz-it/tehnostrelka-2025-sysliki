@@ -1,9 +1,11 @@
+import { useCurrentUser } from "~/composable/useCurrentUser"
 import prisma from "~/lib/prisma"
 import { authUser,  } from "~/shared/utils/abilities"
 
 
 
 export default eventHandler(async() => {
+    const { user } = useCurrentUser()
     if (authUser) {
         const route_privat = await prisma.route.findMany({
             where:{

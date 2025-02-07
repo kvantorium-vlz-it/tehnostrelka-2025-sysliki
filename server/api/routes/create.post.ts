@@ -1,7 +1,8 @@
 import { routes } from "vue-router/auto-routes";
+import { useCurrentUser } from "~/composable/useCurrentUser";
 import prisma from "~/lib/prisma";
 import { authUser } from "~/shared/utils/abilities";
-import { user } from "~/use.vue";
+// import { user } from "~/use.vue";
 
 
 interface Body {
@@ -28,6 +29,7 @@ interface Body {
   }
   
   export default eventHandler(async(event)=>{ 
+  const { user } = useCurrentUser()
   if (authUser) {
     const {city, name, descripsion, privateRoute, approved, places, images } = await readBody<Body>(event)
 
