@@ -23,6 +23,7 @@ model User {
   auditLog   AuditLog[] 
   moder      Moder[] 
   visited    Visited[]
+  favorites Favorites[]
   user_admin UserAdmin? 
 } 
  
@@ -37,7 +38,7 @@ model Route {
   id          Int       @id @default(autoincrement()) 
   creater_id  Int 
   name        String 
-  descripsion String 
+  description String 
   created_at  DateTime  @default(now()) 
   updated_at  DateTime? 
   private     Boolean 
@@ -49,7 +50,8 @@ model Route {
   route_image RouteImage[] 
   moder       Moder[] 
   coments     Coments[] 
-  rating      Rating[] 
+  rating      Rating[]
+  favorites Favorites[] 
   // auditLog    AuditLog[] 
   visited     Visited[]
   city        City? 
@@ -159,4 +161,12 @@ model AuditLog {
   // route        Route       @relation(fields: [record_id], references: [id],onDelete: Cascade) 
   // image        Image       @relation(fields: [record_id], references: [id],onDelete: Cascade) 
   // roulte_place RoultePlace @relation(fields: [record_id], references: [id],onDelete: Cascade) 
+}
+
+model Favorites  {
+  id  Int      @id @default(autoincrement()) 
+  route_id Int 
+  user_id Int
+  route Route @relation(fields: [route_id], references: [id]) 
+  user  User  @relation(fields: [user_id], references: [id]) 
 }

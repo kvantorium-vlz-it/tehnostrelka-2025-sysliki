@@ -8,12 +8,12 @@ import { authUser } from "~/shared/utils/abilities";
 interface Body {
     creater_id: number
     name: string
-    descripsion: string
+    description: string
     privateRoute: boolean
     approved: boolean
     places: [{
       name: string
-      descripsion: string
+      description: string
       lot: number
       lat: number
       images: {
@@ -31,13 +31,13 @@ interface Body {
   export default eventHandler(async(event)=>{ 
   const { user } = useCurrentUser()
   if (authUser) {
-    const {city, name, descripsion, privateRoute, approved, places, images } = await readBody<Body>(event)
+    const {city, name, description, privateRoute, approved, places, images } = await readBody<Body>(event)
 
     const newRoute = await prisma.route.create({
       data: {   
         creater_id:user.yandexId,
         name,
-        descripsion,
+        description,
         private: privateRoute || false,
         approved: approved || false,
 
@@ -45,7 +45,7 @@ interface Body {
           create: places.map((place) => ({
             lat: place.lat,
             lot: place.lot,
-            description: place.descripsion,
+            description: place.description,
             name: place.name,
 
               route_place_image:{
@@ -82,8 +82,19 @@ interface Body {
         }
       },
     })
+
+    if (privateRoute) {
+      await prisma.moder.create({
+        data:{
+          route_id:newRoute.id,
+          user_id:user.yandexId
+        }
+      })
+      
+    }
     return newRoute
 
+    
   }
 })
 

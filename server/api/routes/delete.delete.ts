@@ -8,12 +8,12 @@ interface Body {
     route_id: number
     creater_id: number
     name: string
-    descripsion: string
+    description: string
     privateRoute: boolean
     approved: boolean
     places: [{
       name: string
-      descripsion: string
+      description: string
       lot: number
       lat: number
       images: {
