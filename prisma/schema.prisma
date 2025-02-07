@@ -77,7 +77,7 @@ model RoutePlaceImage {
   route_place_id Int 
  
   route_place RoultePlace @relation(fields: [route_place_id], references: [id],onDelete: Cascade) 
-  image       Image       @relation(fields: [image_id], references: [id]) 
+  image       Image       @relation(fields: [image_id], references: [id],onDelete: Cascade) 
 } 
  
 model Image { 
@@ -96,7 +96,7 @@ model RouteImage {
   image_id Int @unique 
  
   route Route @relation(fields: [route_id], references: [id],onDelete: Cascade) 
-  image Image @relation(fields: [image_id], references: [id]) 
+  image Image @relation(fields: [image_id], references: [id],onDelete: Cascade) 
 } 
  
 model Moder { 
@@ -167,6 +167,6 @@ model Favorites  {
   id  Int      @id @default(autoincrement()) 
   route_id Int 
   user_id Int
-  route Route @relation(fields: [route_id], references: [id]) 
+  route Route @relation(fields: [route_id], references: [id], onDelete: Cascade  ) 
   user  User  @relation(fields: [user_id], references: [id]) 
 }
