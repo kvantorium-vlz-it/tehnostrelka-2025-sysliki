@@ -1,3 +1,4 @@
+import { useCurrentUser } from "~/composable/useCurrentUser"
 import prisma from "~/lib/prisma"
 import { adminUser, authUser, guest } from "~/shared/utils/abilities"
 
@@ -26,13 +27,16 @@ interface Body {
 
 export default eventHandler(async(event) => {
     if (authUser) {
+        const { user } = useCurrentUser()
         
         const {name, description, privateRoute} = await readBody<Body>(event)
         const id = +getRouterParam(event, 'id')!
         
         const rewriteRoute = await prisma.route.update({
             where:{
-                id
+                id,
+                creater_id:user.yandexId
+
             },  
             data: {
                 name,
