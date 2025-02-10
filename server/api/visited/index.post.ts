@@ -16,7 +16,7 @@ export default eventHandler(async(event) => {
                 user_id:user.yandexId
             }
         })
-        if (isVisited) {
+        if (!isVisited) {
             const newVisited = await prisma.visited.create({
                 data:{
                     route_id,
