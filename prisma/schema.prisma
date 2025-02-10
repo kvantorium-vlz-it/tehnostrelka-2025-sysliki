@@ -43,8 +43,10 @@ model Route {
   updated_at  DateTime? 
   private     Boolean 
   approved    Boolean? 
- 
+  city_id Int
   user User @relation(fields: [creater_id], references: [id]) 
+  city City @relation(fields: [city_id], references: [id]) 
+
  
   roulte_place RoultePlace[] 
   route_image RouteImage[] 
@@ -54,7 +56,7 @@ model Route {
   favorites Favorites[] 
   // auditLog    AuditLog[] 
   visited     Visited[]
-  city        City? 
+  // city        City? 
 } 
  
 model RoultePlace { 
@@ -142,9 +144,8 @@ model Visited {
 model City { 
   id       Int    @id @default(autoincrement()) 
   name     String 
-  route_id Int    @unique 
- 
-  route Route @relation(fields: [route_id], references: [id],onDelete: Cascade) 
+  // route_id Int    @unique 
+  route Route[]
 } 
  
 model AuditLog { 
