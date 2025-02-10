@@ -10,12 +10,19 @@ export default eventHandler(async(event) => {
     const { user } = useCurrentUser()
     if (authUser){
         const {route_id} = await readBody<Body>(event)
-
-        const newVisited = await prisma.visited.create({
-            data:{
+        const isVisited = await prisma.visited.findFirst({
+            where:{
                 route_id,
-                user_id:user.yandexId,
+                user_id:user.yandexId
             }
         })
+        if (isVisited) {
+            const newVisited = await prisma.visited.create({
+                data:{
+                    route_id,
+                    user_id:user.yandexId,
+                }
+            })
+        }
     }
 })
