@@ -13,18 +13,25 @@ export default eventHandler(async(event) => {
         await prisma.image.delete({
             where:{
                 id,
-                route_image:{
-                    route:{
-                        creater_id:user.yandexId
-                    }
-                },
-                route_place_image:{
-                    route_place:{
-                        route:{
-                            creater_id:user.yandexId
+                OR:[   
+                    {    
+                        route_image:{
+                            route:{
+                                creater_id:user.yandexId
+                            }
+                        },
+                    },
+                    
+                    {   
+                        route_place_image:{
+                            route_place:{
+                                route:{
+                                    creater_id:user.yandexId
+                                }
+                            }
                         }
                     }
-                }
+                ]
             }
         })
     }
