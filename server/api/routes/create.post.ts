@@ -10,8 +10,7 @@ interface Body {
     name: string
     description: string
     privateRoute: boolean
-    approved: boolean
-    places: [{
+    places: {
       name: string
       description: string
       lot: number
@@ -20,7 +19,7 @@ interface Body {
         src: string
         alt: string
       }[]
-    }]
+    }[]
     images:{
       src: string
       alt: string
@@ -31,7 +30,7 @@ interface Body {
   export default eventHandler(async(event)=>{ 
   const { user } = useCurrentUser()
   if (authUser) {
-    const {city_id, name, description, privateRoute, approved, places, images } = await readBody<Body>(event)
+    const {city_id, name, description, privateRoute,  places, images } = await readBody<Body>(event)
 
     const newRoute = await prisma.route.create({
       data: {   
@@ -39,7 +38,6 @@ interface Body {
         name,
         description,
         private: privateRoute || false,
-        approved: approved || false,
         city_id,
 
         roulte_place: {
