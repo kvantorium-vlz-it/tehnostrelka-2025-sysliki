@@ -1,7 +1,8 @@
 import { routes } from "vue-router/auto-routes";
+import { useCurrentUser } from "~/composable/useCurrentUser";
 import prisma from "~/lib/prisma";
 import { authUser } from "~/shared/utils/abilities";
-// import { user } from "~/use.vue";
+
 
 
 interface Body {
@@ -30,12 +31,15 @@ interface Body {
   
   export default eventHandler(async(event)=>{ 
     if (authUser){
+        const { user } = useCurrentUser()
+
         const {route_id} = await readBody<Body>(event)
 
         
-        const ids =  await prisma.route.findMany({
+        const ids =  await prisma.route.findUnique({
             where:{
                 id:+route_id,
+                creater_id:user.yandexId,
              },
                 
             
@@ -47,7 +51,12 @@ interface Body {
         })
         await prisma.image.deleteMany({
             where:{
-                id:+ids
+                id:+[
+                  ...ids?.route_image.map((v) => v.image.id)!,
+                  ...ids?.roulte_place.map((v) => v.route_place_image.map((vv) => vv.image.id))!
+
+
+                ]
             }
         })
         await prisma.route.delete({
