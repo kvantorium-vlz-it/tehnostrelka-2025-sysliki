@@ -16,20 +16,26 @@ export default eventHandler(async(event) => {
         const rewriteImage =  await prisma.image.update({
             where:{
                 id:+id,
-                route_image:{
-                    route:{
-                        creater_id:user.yandexId
-                    }
-                },
-            // нужен ли or?
 
-                route_place_image:{
-                    route_place:{
+         OR:[   
+                {    
+                    route_image:{
                         route:{
                             creater_id:user.yandexId
                         }
+                    },
+                },
+                
+                {   
+                    route_place_image:{
+                        route_place:{
+                            route:{
+                                creater_id:user.yandexId
+                            }
+                        }
                     }
                 }
+            ]
                 
             },
             data:{
