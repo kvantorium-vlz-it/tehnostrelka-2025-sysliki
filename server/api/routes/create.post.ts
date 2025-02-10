@@ -27,7 +27,7 @@ interface Body {
     city_id: number
   }
   
-  export default eventHandler(async(event)=>{ 
+export default eventHandler(async(event)=>{ 
   const { user } = useCurrentUser()
   if (authUser) {
     const {city_id, name, description, privateRoute,  places, images } = await readBody<Body>(event)
