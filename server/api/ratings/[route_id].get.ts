@@ -16,13 +16,9 @@ import { guest } from "~/shared/utils/abilities";
                 
             })
             
-            const ratings_value = ratings.reduce((acc, rating) => acc + rating.value, 0);
-            const value =  ratings.length
-            const rating = ratings_value/value
-            if (rating === null || rating === undefined ) {
-            return 0
-            }
-            return rating // null or undefine ????????
+            return ratings.length > 0
+                ?  ratings.reduce((acc, rating) => acc + rating.value, 0) / ratings.length
+                : 0 
         }
    
    })
