@@ -12,7 +12,6 @@ export default eventHandler(async() => {
                 approved:true
             },
             include:{
-                city:true,
                 visited:true,
                 rating:true,
                 roulte_place:{
