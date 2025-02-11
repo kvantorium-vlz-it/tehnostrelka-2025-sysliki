@@ -17,12 +17,14 @@ CREATE TABLE "Route" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "creater_id" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
-    "descripsion" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" DATETIME,
     "private" BOOLEAN NOT NULL,
     "approved" BOOLEAN,
-    CONSTRAINT "Route_creater_id_fkey" FOREIGN KEY ("creater_id") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "city_id" INTEGER NOT NULL,
+    CONSTRAINT "Route_creater_id_fkey" FOREIGN KEY ("creater_id") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "Route_city_id_fkey" FOREIGN KEY ("city_id") REFERENCES "City" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -42,7 +44,7 @@ CREATE TABLE "RoutePlaceImage" (
     "image_id" INTEGER NOT NULL,
     "route_place_id" INTEGER NOT NULL,
     CONSTRAINT "RoutePlaceImage_route_place_id_fkey" FOREIGN KEY ("route_place_id") REFERENCES "RoultePlace" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "RoutePlaceImage_image_id_fkey" FOREIGN KEY ("image_id") REFERENCES "Image" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "RoutePlaceImage_image_id_fkey" FOREIGN KEY ("image_id") REFERENCES "Image" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -58,7 +60,7 @@ CREATE TABLE "RouteImage" (
     "route_id" INTEGER NOT NULL,
     "image_id" INTEGER NOT NULL,
     CONSTRAINT "RouteImage_route_id_fkey" FOREIGN KEY ("route_id") REFERENCES "Route" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "RouteImage_image_id_fkey" FOREIGN KEY ("image_id") REFERENCES "Image" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "RouteImage_image_id_fkey" FOREIGN KEY ("image_id") REFERENCES "Image" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -104,9 +106,7 @@ CREATE TABLE "Visited" (
 -- CreateTable
 CREATE TABLE "City" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "name" TEXT NOT NULL,
-    "route_id" INTEGER NOT NULL,
-    CONSTRAINT "City_route_id_fkey" FOREIGN KEY ("route_id") REFERENCES "Route" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    "name" TEXT NOT NULL
 );
 
 -- CreateTable
@@ -114,7 +114,21 @@ CREATE TABLE "AuditLog" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "table_name" TEXT NOT NULL,
     "record_id" INTEGER NOT NULL,
-    "operation" TEXT NOT NULL
+    "creater_id" INTEGER NOT NULL,
+    "operation" TEXT NOT NULL,
+    "old_data" JSONB,
+    "new_data" JSONB,
+    "changed_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "AuditLog_creater_id_fkey" FOREIGN KEY ("creater_id") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Favorites" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "route_id" INTEGER NOT NULL,
+    "user_id" INTEGER NOT NULL,
+    CONSTRAINT "Favorites_route_id_fkey" FOREIGN KEY ("route_id") REFERENCES "Route" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "Favorites_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateIndex
@@ -128,6 +142,3 @@ CREATE UNIQUE INDEX "RoutePlaceImage_image_id_key" ON "RoutePlaceImage"("image_i
 
 -- CreateIndex
 CREATE UNIQUE INDEX "RouteImage_image_id_key" ON "RouteImage"("image_id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "City_route_id_key" ON "City"("route_id");
