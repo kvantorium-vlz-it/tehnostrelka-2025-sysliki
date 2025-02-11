@@ -6,10 +6,11 @@ import { authUser } from "~/shared/utils/abilities";
 
 
 interface Body {
-    creater_id: number
+    // creater_id: number
     name: string
     description: string
     privateRoute: boolean
+    city_id: number
     places: {
       name: string
       description: string
@@ -24,7 +25,6 @@ interface Body {
       src: string
       alt: string
     }[]
-    city_id: number
   }
   
 export default eventHandler(async(event)=>{ 
