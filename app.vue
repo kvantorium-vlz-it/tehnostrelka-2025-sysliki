@@ -167,7 +167,7 @@
 
         
     </div>
-    <button v-if="placeCount>=2" @click="createRoute(route.route_name, route.route_description, route.is_privat, 'volgs', places, images)">
+    <button v-if="placeCount>=2" @click="createRoute(route.route_name, route.route_description, route.is_privat, 1, places, images)">
       создать
     </button>
     <hr>

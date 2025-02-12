@@ -1,7 +1,7 @@
 
 export const useCurrentUser = () => {
   
-  const { user, loggedIn, session } = useUserSession()
+  const { user, loggedIn, session } = getUserSession()
   
   return {
     user,
