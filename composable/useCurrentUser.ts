@@ -1,5 +1,6 @@
 
 export const useCurrentUser = () => {
+  
   const { user, loggedIn, session } = useUserSession()
   
   return {
