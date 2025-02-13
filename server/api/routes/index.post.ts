@@ -1,8 +1,5 @@
-import { routes } from "vue-router/auto-routes";
-import { useCurrentUser } from "~/composable/useCurrentUser";
+
 import prisma from "~/lib/prisma";
-import { authUser } from "~/shared/utils/abilities";
-// import { user } from "~/use.vue";
 
 
 interface Body {
@@ -36,7 +33,7 @@ export default eventHandler(async(event)=>{
       creater_id:+user.yandexId,
       name,
       description,
-      private: privateRoute || false,
+      is_private: privateRoute || false,
       city_id,
 
       roulte_place: {

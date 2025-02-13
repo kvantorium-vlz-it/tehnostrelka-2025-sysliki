@@ -1,6 +1,6 @@
-import { useCurrentUser } from "~/composable/useCurrentUser";
+
 import prisma from "~/lib/prisma";
-import { authUser } from "~/shared/utils/abilities";
+
 
 
 // import { user } from "~/use.vue";
@@ -12,9 +12,8 @@ interface Body{
 }
 
 export default eventHandler(async(event) =>{
-        const { user } = useCurrentUser()
+    const { user } = await requireUserSession(event)
 
-    if (authUser) {
 
         const {text, route_id} = await readBody<Body>(event)
 
@@ -28,6 +27,6 @@ export default eventHandler(async(event) =>{
         })
 
         return newComent
-    }
+    
 
 })

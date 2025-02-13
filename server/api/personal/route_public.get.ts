@@ -1,16 +1,16 @@
-import { useCurrentUser } from "~/composable/useCurrentUser"
+
 import prisma from "~/lib/prisma"
-import { authUser } from "~/shared/utils/abilities"
-// import { user } from "~/use.vue"
 
 
-export default eventHandler(async() => {
-    const { user } = useCurrentUser()
-    if (authUser) {
+
+
+export default eventHandler(async(event) => {
+    const { user } = await requireUserSession(event)
+
         const route_public = await prisma.route.findMany({
             where:{
-                private:false,
-                creater_id:user.yandexId
+                is_private:false,
+                creater_id:+user.yandexId
             },
             include:{
                 city:true,
@@ -31,5 +31,5 @@ export default eventHandler(async() => {
             }
         })
         return route_public
-    }
+    
 })

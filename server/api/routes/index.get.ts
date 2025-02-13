@@ -7,7 +7,7 @@ export default eventHandler(async() => {
 
         const route = await prisma.route.findMany({
             where: {
-                private:false,
+                is_private:false,
                 approved:true,
 
             },

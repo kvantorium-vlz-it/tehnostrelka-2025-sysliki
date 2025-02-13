@@ -34,7 +34,7 @@ export default defineOAuthYandexEventHandler({
                 
                 is_admin: !! await prisma.userAdmin.findUnique({
                     where:{
-                        id:+user.id
+                        user_id:+user.id
                     }
                 })
             },

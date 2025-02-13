@@ -1,5 +1,5 @@
-import { useCurrentUser } from "~/composable/useCurrentUser"
-import prisma from "~/lib/prisma"
+
+import prisma, { clearUserContext, setUserContext } from "~/lib/prisma"
 import { authUser } from "~/shared/utils/abilities"
 
 interface Body {
@@ -9,7 +9,8 @@ interface Body {
 
 export default eventHandler(async(event) => {
     if ( authUser){ 
-        const { user } = useCurrentUser()
+        const { user } = await requireUserSession(event)
+        setUserContext(+user.yandexId)
 
         const {src,alt} = await readBody<Body>(event)
         const id = +getRouterParam(event, 'id')!
@@ -21,7 +22,7 @@ export default eventHandler(async(event) => {
                 {    
                     route_image:{
                         route:{
-                            creater_id:user.yandexId
+                            creater_id:+user.yandexId
                         }
                     },
                 },
@@ -30,7 +31,7 @@ export default eventHandler(async(event) => {
                     route_place_image:{
                         route_place:{
                             route:{
-                                creater_id:user.yandexId
+                                creater_id:+user.yandexId
                             }
                         }
                     }
@@ -43,7 +44,7 @@ export default eventHandler(async(event) => {
                 src
             }
         })
-
+        clearUserContext()
         return rewriteImage
     }
 })
