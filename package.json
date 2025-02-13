@@ -15,8 +15,10 @@
     "nuxt": "^3.15.3",
     "nuxt-auth-utils": "^0.5.10",
     "nuxt-authorization": "^0.3.3",
+    "nuxt-file-storage": "^0.2.9",
     "prisma": "^6.2.1",
     "vue": "latest",
-    "vue-router": "latest"
+    "vue-router": "latest",
+    "zod": "^3.24.2"
   }
 }

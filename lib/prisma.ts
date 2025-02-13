@@ -1,22 +1,32 @@
 import { PrismaClient } from '@prisma/client';
-import { useCurrentUser } from "~/composable/useCurrentUser";
+// import { useCurrentUser } from "~/composable/useCurrentUser";
+let userContext: { userId?: number } = {};
+
+export const setUserContext = (userId: number) => {
+  userContext = { userId };
+};
+
+export const clearUserContext = () => {
+  userContext = {};
+};
 
 
 const prisma = new PrismaClient().$extends({
   
   query: {
+   
+  
     route:{
       async update({ args, query }) {
-        if (!args.data.private) {
+        if (!args.data.is_private) {
           const oldRoute = await prisma.route.findUnique({
             where: { id: args.where.id },
             
           });
-          const { user } = useCurrentUser()
           await prisma.moder.create({
             data:{
               route_id:oldRoute!.id,
-              user_id:user.value!.yandexId
+              user_id:userContext.userId!
             }
           })
           
@@ -28,13 +38,13 @@ const prisma = new PrismaClient().$extends({
         });
 
         if (oldRoute) {
-          const { user } = useCurrentUser()
+          
           await prisma.auditLog.create({
             data: {
               table_name:'route',
               operation:'update',
               record_id:oldRoute.id,
-              creater_id:user.value!.yandexId,
+              creater_id:userContext.userId!,
               old_data:oldRoute,
               new_data:args.data
               
@@ -61,16 +71,16 @@ const prisma = new PrismaClient().$extends({
 
       async update({ args, query }) {
         
-          if (!args.data.route?.connect?.private) {
+          if (!args.data.route?.connect?.is_private) {
             const oldRoute = await prisma.route.findUnique({
               where: { id: args.where.id },
               
             });
-            const { user } = useCurrentUser()
+           
             await prisma.moder.create({
               data:{
                 route_id:oldRoute!.id,
-                user_id:user.value!.yandexId
+                user_id:userContext.userId!
               }
             })
             
@@ -83,13 +93,13 @@ const prisma = new PrismaClient().$extends({
         });
 
         if (oldRoultePlace) {
-          const { user } = useCurrentUser()
+          
           await prisma.auditLog.create({
             data: {
               table_name:'roultePlace',
               operation:'update',
               record_id:oldRoultePlace.id,
-              creater_id:user.value!.yandexId,
+              creater_id:userContext.userId!,
               old_data:oldRoultePlace,
               new_data:args.data
               
@@ -112,34 +122,34 @@ const prisma = new PrismaClient().$extends({
         return query(args);
       }
     },
-    image:{
-      async update({ args, query }) {
+    image:{ 
+      async update({ args, query,  }) {
 
-        if (!args.data.route_image?.connect?.route?.private) {
+        if (!args.data.route_image?.connect?.route?.is_private) {
           const oldRoute = await prisma.route.findUnique({
             where: { id: args.where.id },
             
           });
-          const { user } = useCurrentUser()
+          // const { user } = useCurrentUser()
           await prisma.moder.create({
             data:{
               route_id:oldRoute!.id,
-              user_id:user.value!.yandexId
+              user_id:userContext.userId!
             }
           })
           
           return query(args)
         }
-        if (!args.data.route_place_image?.connect?.route_place?.route?.private) {
+        if (!args.data.route_place_image?.connect?.route_place?.route?.is_private) {
           const oldRoute = await prisma.route.findUnique({
             where: { id: args.where.id },
             
           });
-          const { user } = useCurrentUser()
+          
           await prisma.moder.create({
             data:{
               route_id:oldRoute!.id,
-              user_id:user.value!.yandexId
+              user_id:userContext.userId!
             }
           })
           
@@ -152,13 +162,13 @@ const prisma = new PrismaClient().$extends({
         });
 
         if (oldImage) {
-          const { user } = useCurrentUser()
+          
           await prisma.auditLog.create({
             data: {
               table_name:'image',
               operation:'update',
               record_id:oldImage.id,
-              creater_id:user.value!.yandexId,
+              creater_id:userContext.userId!,
               old_data:oldImage,
               new_data:args.data
               
@@ -181,8 +191,9 @@ const prisma = new PrismaClient().$extends({
       }
     },
     
-
+  
   },
+
 });
 
 

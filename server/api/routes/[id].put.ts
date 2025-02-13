@@ -1,5 +1,5 @@
-import { useCurrentUser } from "~/composable/useCurrentUser"
-import prisma from "~/lib/prisma"
+// import { useCurrentUser } from "~/composable/useCurrentUser"
+import prisma, { clearUserContext, setUserContext } from "~/lib/prisma"
 import { adminUser, authUser, guest } from "~/shared/utils/abilities"
 
 interface Body {
@@ -27,7 +27,8 @@ interface Body {
 
 export default eventHandler(async(event) => {
     if (authUser) {
-        const { user } = useCurrentUser()
+        const  {user}  = await requireUserSession(event)
+        setUserContext(+user.yandexId)
         
         const {name, description, privateRoute} = await readBody<Body>(event)
         const id = +getRouterParam(event, 'id')!
@@ -35,13 +36,13 @@ export default eventHandler(async(event) => {
         const rewriteRoute = await prisma.route.update({
             where:{
                 id,
-                creater_id:user.yandexId
+                creater_id:+user.yandexId
 
             },  
             data: {
                 name,
                 description,
-                private:privateRoute
+                is_private:privateRoute
                 
             }
         })
@@ -60,10 +61,12 @@ export default eventHandler(async(event) => {
                 name,
                 description,
                 approved,
-                private:privateRoute
+                is_private:privateRoute
                 
             }
         })
+        clearUserContext()
+        
         return rewriteRoute
 
     }

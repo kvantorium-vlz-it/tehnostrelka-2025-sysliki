@@ -1,6 +1,6 @@
-import { useCurrentUser } from "~/composable/useCurrentUser"
+
 import prisma from "~/lib/prisma"
-import { authUser } from "~/shared/utils/abilities"
+
 
 
 interface Body { 
@@ -10,17 +10,17 @@ interface Body {
 
 
 export default eventHandler(async(event) => {
-    if (authUser) {
-        const { user } = useCurrentUser()
+    const { user } = await requireUserSession(event)
+
         const {route_id} = await readBody<Body>(event)
 
         const newFavorit = await prisma.favorites.create({
             data:{
                 route_id,
-                user_id:user.yandexId
+                user_id:+user.yandexId
             }
 
         })
-    }
+    
 
 })

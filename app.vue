@@ -1,8 +1,15 @@
 <script setup lang="ts">
-  const { loggedIn, user, session, fetch, clear } = useUserSession()
+  import { adminUser, authUser } from './shared/utils/abilities'
 
+
+
+  const { loggedIn, user, session, fetch, clear } = useUserSession()
   
 
+
+
+
+  
 </script>
 
 <template>
@@ -18,9 +25,13 @@
           <!-- session: <pre>{{ JSON.stringify(session, null, 2) }}</pre> -->
     </div>
     <button @click="clear">Logout</button>
+    
   </div>
   <div v-else>
     <h1>Not logged in</h1>
       <NuxtLink external to="/api/auth/yandex">Yandex</NuxtLink>
   </div>
+  <Can :ability="authUser">
+    <createRouteForm/>
+  </Can>
 </template>

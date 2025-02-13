@@ -1,16 +1,16 @@
-import { useCurrentUser } from "~/composable/useCurrentUser"
+
 import prisma from "~/lib/prisma"
-import { authUser } from "~/shared/utils/abilities"
-// import { user } from "~/use.vue"
 
 
 
-export default eventHandler(async() => {
-    const { user } = useCurrentUser()
-    if (authUser) {
+
+
+export default eventHandler(async(event) => {
+    const { user } = await requireUserSession(event)
+
          const reting = await prisma.rating.findMany({
             where:{
-                user_id:user.yandexId,
+                user_id:+user.yandexId,
 
             },
             include:{
@@ -23,6 +23,6 @@ export default eventHandler(async() => {
 
         })
         return reting
-    }
+
 
 })

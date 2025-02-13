@@ -1,16 +1,16 @@
-import { useCurrentUser } from "~/composable/useCurrentUser"
+
 import prisma from "~/lib/prisma"
-import { authUser,  } from "~/shared/utils/abilities"
 
 
 
-export default eventHandler(async() => {
-    const { user } = useCurrentUser()
-    if (authUser) {
+
+export default eventHandler(async(event) => {
+    const { user } = await requireUserSession(event)
+
         const route_privat = await prisma.route.findMany({
             where:{
-                private:true,
-                creater_id:user.yandexId
+                is_private:true,
+                creater_id:+user.yandexId
             },
             include:{
                 city:true,
@@ -31,5 +31,5 @@ export default eventHandler(async() => {
             }
         })
         return route_privat
-    }
+    
 })

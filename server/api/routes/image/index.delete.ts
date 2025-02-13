@@ -1,4 +1,4 @@
-import { useCurrentUser } from "~/composable/useCurrentUser"
+
 import prisma from "~/lib/prisma"
 import { authUser } from "~/shared/utils/abilities"
 
@@ -8,7 +8,7 @@ interface Body {
 
 export default eventHandler(async(event) => {
     if (authUser) {
-        const { user } = useCurrentUser()
+        const { user } = await requireUserSession(event)
         const {id} = await readBody<Body>(event)
         await prisma.image.delete({
             where:{
@@ -17,7 +17,7 @@ export default eventHandler(async(event) => {
                     {    
                         route_image:{
                             route:{
-                                creater_id:user.yandexId
+                                creater_id:+user.yandexId
                             }
                         },
                     },
@@ -26,7 +26,7 @@ export default eventHandler(async(event) => {
                         route_place_image:{
                             route_place:{
                                 route:{
-                                    creater_id:user.yandexId
+                                    creater_id:+user.yandexId
                                 }
                             }
                         }

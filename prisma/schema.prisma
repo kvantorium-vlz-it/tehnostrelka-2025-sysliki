@@ -41,7 +41,7 @@ model Route {
   description String 
   created_at  DateTime  @default(now()) 
   updated_at  DateTime? 
-  private     Boolean 
+  is_private     Boolean 
   approved    Boolean? 
   city_id Int
   user User @relation(fields: [creater_id], references: [id]) 
