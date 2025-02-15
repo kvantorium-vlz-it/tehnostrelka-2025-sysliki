@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Days+One&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Manrope:wght@200..800&family=Merriweather+Sans:wght@800&family=Righteous&family=Roboto:wght@100&family=Rubik:ital,wght@0,300..900;1,300..900&family=Wix+Madefor+Display:wght@684&family=Yeseva+One&display=swap');
+
+
+@font-face {
+    font-family: 'Gothic60';
+    src: url(/asets/fonts/Gothic60-Regular.otf);
+}
+
+*{
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    font-size: 10px;
+    font-family: Gothic60, 'Times New Roman';
+    user-select: none;
+    border-radius: 2.5rem;
+}
+
+@media (max-width:1270px) {
+    *{font-size: 7px;}
+}
+
+
+@media (max-width:870px) {
+    *{font-size: 5px;}
+}
+
+@media (max-width:600px) {
+    *{font-size: 3px;}
+}
+
