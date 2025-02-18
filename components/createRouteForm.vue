@@ -17,25 +17,25 @@ const route = reactive<Route>({
 })
 
 
-const handleRouteFileChange = (event: Event, index: number) => {
-    const target = event.target as HTMLInputElement
-    const file = target.files?.[0] as unknown as ServerFile
-    route.images[index] = file
-}
+// const handleRouteFileChange = (event: Event, index: number) => {
+//     const target = event.target as HTMLInputElement
+//     const file = target.files?.[0] as unknown as ServerFile
+//     route.images[index] = file
+// }
 
-const handleRoutePlaceFileChange = (event: Event, placeIndex: number, imageIndex: number) => {
-    const target = event.target as HTMLInputElement
-    const file = target.files?.[0] as unknown as ServerFile
-    route.places[placeIndex].images[imageIndex] = file
-}
+// const handleRoutePlaceFileChange = (event: Event, placeIndex: number, imageIndex: number) => {
+//     const target = event.target as HTMLInputElement
+//     const file = target.files?.[0] as unknown as ServerFile
+//     route.places[placeIndex].images[imageIndex] = file
+// }
 
-const createImageURL = (image: File | ServerFile |  null) => { 
-    if (image === null) {
-        return ''
-    }
+// const createImageURL = (image: File | ServerFile |  null) => { 
+//     if (image === null) {
+//         return ''
+//     }
 
-    return URL.createObjectURL(image as Blob)
-}
+//     return URL.createObjectURL(image as Blob)
+// }
 
 
 const handleSubmit = async () => {
@@ -63,18 +63,10 @@ const handleSubmit = async () => {
         <hr>
 
         <div>
-            <div v-for="(image, i) in route.images">
-                {{ i }}
-                <input type="file" @change="(event) => handleRouteFileChange(event, i)">
-                <button type="button" @click="() => {route.images.splice(i, 1); console.log(createImageURL(image));
-                }">X</button>
-
-                <img :src=" createImageURL(image)" alt="" width="50">
-            </div>
+            <imageInputForm @update="(files) => route.images = files"/>
         </div>
 
 
-        <button type="button" @click="() => route.images.push(null)">+ изображение маршрута</button>
 
 
         <div>
@@ -87,15 +79,7 @@ const handleSubmit = async () => {
                 </div>
 
                 <div>
-                    <div v-for="(image, imageIndex) in place.images">
-                        <input type="file" @change="(event) => handleRoutePlaceFileChange(event, placeIndex, imageIndex)">
-                        <button type="button" @click="() => place.images.splice(imageIndex - 1, 1)">X</button>
-                        <img v-if="image" :src="createImageURL(image)" alt="" width="70">
-                    </div>
-
-                    <button type="button" @click="() => {place.images.push(null)}">
-                        + изображение места
-                    </button>
+                    <imageInputForm @update="(files) => place.images = files"/>
                 </div>
                 <hr>
             </div>

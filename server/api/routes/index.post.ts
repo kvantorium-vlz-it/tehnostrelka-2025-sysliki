@@ -1,32 +1,46 @@
 
+// import { Route,  } from "~/assets/typescript/zod-schemas/route";
+import { Route,routeSchema } from "~/assets/ts/zod/route";
 import prisma from "~/lib/prisma";
 
 
-interface Body {
-    // creater_id: number
-    name: string
-    description: string
-    privateRoute: boolean
-    city_id: number
-    places: {
-      name: string
-      description: string
-      lot: number
-      lat: number
-      images: {
-        src: string
-        alt: string
-      }[]
-    }[]
-    images:{
-      src: string
-      alt: string
-    }[]
-  }
-  
 export default eventHandler(async(event)=>{ 
-  const { user } = await  requireUserSession(event)
-  const {city_id, name, description, privateRoute,  places, images } = await readBody<Body>(event)
+  const { user } = await requireUserSession(event, {
+    statusCode: 401,
+    message: 'Вы не залогинены',
+})
+
+const body = await readBody<Route>(event)
+const parseResult = routeSchema.safeParse(body)
+
+
+
+if (!parseResult.success) {
+    throw createError({
+        status: 500,
+        message: parseResult.error.message,
+    })
+}
+
+const route = {
+    ...parseResult.data,
+    images: (await Promise.all(
+        parseResult.data.images
+            .filter((image) => image !== null)
+            .map((image) => storeFileLocally(image, 8))
+            
+    )).map((src) => ({ src, alt: '' })),
+    places: await Promise.all(parseResult.data.places.map(async (place) => ({
+            ...place,
+            images: (await Promise.all(place.images
+                .filter((image) => image !== null)
+                .map((image) => storeFileLocally(image, 8))
+            )).map((src) => ({ src, alt: '' }))
+        }))
+    )
+}
+
+const { city_id, name, description, privateRoute,  places, images } = route
 
   const newRoute = await prisma.route.create({
     data: {   
