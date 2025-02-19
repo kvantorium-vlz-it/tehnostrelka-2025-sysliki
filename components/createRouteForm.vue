@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ServerFile } from 'nuxt-file-storage';
 import type { Route } from '~/assets/ts/zod/route';
-
+import type { GeoJson } from '~/assets/ts/zod/geoJson'
 
 
 
@@ -15,6 +15,52 @@ const route = reactive<Route>({
     places: [],
     privateRoute: true,
 })
+
+// function geoJson() {
+    
+    const geojsonData  = reactive<GeoJson>({
+        type: "FeatureCollection",
+        features: []
+    
+    })
+
+    function createGoe(){
+        route.places.map((v) => {
+            if (v.name && v.description) {
+                
+                geojsonData.features.push({
+                        type:'Feature',
+                        geometry: {
+                        type: "Point",
+                        coordinates: [v.lot, v.lat]
+                    },
+                    properties: {
+                        name: v.name,
+                        description: v.description
+                    }
+                })
+            }else {
+                geojsonData.features.push({
+                        type:'Feature',
+                        geometry: {
+                        type: "Point",
+                        coordinates: [v.lot, v.lat]
+                    },
+                   
+                })
+        
+            }
+        
+        })
+        geojsonData.features.push({
+            type: 'Feature',
+            geometry: {
+                type: "LineString",
+                coordinates: ...dataPoints// предпологаемый масив точек поставляемый от карты
+            }
+        })
+
+    }
 
 
 // const handleRouteFileChange = (event: Event, index: number) => {
