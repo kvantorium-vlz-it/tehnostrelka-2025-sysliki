@@ -24,15 +24,15 @@ const { loggedIn, user, session, fetch, clear } = useUserSession()
 <template>
   <RouteMap
     v-model:points="points"
-    v-model:route="route"
+    v-model:route-points="route"
     @render-route="fetchRoute"
   />
 
   <hr>
-  Joined: {{ joinedPointsToString }}
+  <!-- Joined: {{ joinedPointsToString }} -->
 
   <hr>
-  Points: {{ points }}
+  <!-- Points: {{ points }} -->
 
   <hr>
 
@@ -40,7 +40,7 @@ const { loggedIn, user, session, fetch, clear } = useUserSession()
     +
   </button>
 
-  {{ route }}
+  <!-- {{ route }} -->
 
   <div v-if="loggedIn">
     <h1>Welcome {{ user?.real_name}}!</h1>
