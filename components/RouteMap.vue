@@ -12,72 +12,105 @@ const state = shallowRef<RenderPointArgs[]>([]);
 const mode = ref<YandexMapRulerSettings['type']>('ruler');
 const editable = ref(true);
 
-withDefaults(defineProps<{
-    points?: LngLat[]
-}>(), {
-    points: () => []
+const points = defineModel<LngLat[]>('points', {
+    default: () => [],
 })
+const routePoints = defineModel<LngLat[]>('routePoints', {
+    default: () => [],
+})
+
+const onUpdateRuler = (state: RulerCommonState) => {
+    points.value = state.points
+}
+
+defineEmits<{
+    (e: 'renderRoute'): void
+}>()
 </script>
 
 <template>
-    <yandex-map
-        v-model="map"
-        style="height: 500px;"
-        height="1000"
-        :settings="{
-            location: {
-            center: [44.516975,48.707067],
-            zoom:9
-            },
-            showScaleInCopyrights: true,
-        }"
-        width="1000"
-    >
-        <yandex-map-default-scheme-layer/>
-        <yandex-map-default-features-layer/>
-
-        <yandex-map-ruler
-            v-model:points-state="state"
+    <div>
+        <yandex-map
+            v-model="map"
+            style="height: 500px;"
             :settings="{
-                type: mode,
-                points: points,
-                editable,
-                geometry: {
-                    style: {
-                        simplificationRate: 0,
-                        fill: '#666',
-                        fillOpacity: 0.3,
-                        stroke: [
-                            { width: 3, opacity: 0.7, color: '#666' },
-                            { width: 5, opacity: 0.7, color: '#fff' },
-                        ],
-                        
-                    }
+                location: {
+                    center: [44.516975,48.707067],
+                    zoom:9
                 },
+                showScaleInCopyrights: true,
+                zoomRange: {
+                    min: 12,
+                    max: 25,
+                }
             }"
         >
-            <template #point="{ state: pointState, onDelete }">
-                <div
-                    class="point"
-                    :class="{ 'point--last': pointState.index === pointState.totalCount - 1 }"
-                    @click="($event.target as HTMLElement).classList.toggle('point--active')"
-                >
-                    <div class="point_popup">
-                        <!-- {{ getLabel(pointState) }} -->
+            <yandex-map-default-scheme-layer/>
+            <yandex-map-default-features-layer/>
 
-                        <div
-                            class="point_popup_delete"
-                            @click.stop.prevent="onDelete()"
-                        >
-                            Удалить точку
+            <yandex-map-ruler
+                v-model:points-state="state"
+                :settings="{
+                    type: mode,
+                    points: points,
+                    editable,
+                    geometry: {
+                        style: {
+                            simplificationRate: 0,
+                            fill: '#666',
+                            fillOpacity: 0.3,
+                            stroke: [
+                                { width: 3, opacity: 0.7, color: '#666' },
+                                { width: 5, opacity: 0.7, color: '#fff' },
+                            ],
+                            
+                        }
+                    },
+                    onUpdate: onUpdateRuler
+                }"
+            >
+                <template #point="{ state: pointState, onDelete }">
+                    <div
+                        class="point"
+                        :class="{ 'point--last': pointState.index === pointState.totalCount - 1 }"
+                        @click="($event.target as HTMLElement).classList.toggle('point--active')"
+                    >
+                        <div class="point_popup">
+                            <!-- {{ getLabel(pointState) }} -->
+
+                            <div
+                                class="point_popup_delete"
+                                @click.stop.prevent="onDelete()"
+                            >
+                                Удалить точку
+                            </div>
                         </div>
                     </div>
-                </div>
-            </template>
-            <template #previewPoint>
-                <div class="point point--preview"></div>
-            </template>
-        </yandex-map-ruler>
+                </template>
+                <template #previewPoint>
+                    <div class="point point--preview"></div>
+                </template>
+            </yandex-map-ruler>
 
-    </yandex-map>
+
+            
+        <yandex-map-feature
+            :settings="{
+                geometry: {
+                    type: 'LineString',
+                    coordinates: routePoints,
+                },
+                style: {
+                    stroke: [{ width: 8, color: '#007afce6' }],
+                    fill: 'rgba(0, 0, 0, 0)',
+                },
+            }"
+        />
+        </yandex-map>
+        {{ points }}
+
+        <button @click="() => $emit('renderRoute')">
+            Построить маршрут
+        </button>
+    </div>
 </template>
