@@ -1,5 +1,5 @@
 
-import prisma, { clearUserContext, setUserContext } from "~/lib/prisma"
+import prisma from "~/lib/prisma"
 import { authUser } from "~/shared/utils/abilities"
 
 interface Body {
@@ -8,13 +8,13 @@ interface Body {
 }
 
 export default eventHandler(async(event) => {
-    if ( authUser){ 
+    
         const { user } = await requireUserSession(event)
-        setUserContext(+user.yandexId)
+        // setUserContext(+user.yandexId)
 
         const {src,alt} = await readBody<Body>(event)
         const id = +getRouterParam(event, 'id')!
-        const rewriteImage =  await prisma.image.update({
+        const rewriteImage =  await prisma.withUser(user).image.update({
             where:{
                 id:+id,
 
@@ -44,7 +44,7 @@ export default eventHandler(async(event) => {
                 src
             }
         })
-        clearUserContext()
+        // clearUserContext()
         return rewriteImage
-    }
+    
 })

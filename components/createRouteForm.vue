@@ -43,6 +43,7 @@ const route = reactive<Route>({
     name: '',
     places: [],
     privateRoute: true,
+    approved:false
 })
 
 // function geoJson() {
@@ -157,8 +158,10 @@ const handleSubmit = async () => {
         //     console.error(error.response._data.message.map((error) => error.message).join(', '))
         // },
     })
+    console.log(response);
+    
 
-    console.log(response)
+    // console.log(response)
 }
 </script>
 
@@ -210,7 +213,7 @@ const handleSubmit = async () => {
             + место
         </button> -->
 
-        <button type="submit">
+        <button  type="button" @click="handleSubmit">
             Отправить
         </button>
         

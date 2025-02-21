@@ -27,6 +27,7 @@ export const routeSchema = z.object({
     city_id: z.number().and(cityExistsCheck),
     places: z.array(placeSchema).min(2, 'Маршрут не может состоять из меньше, чем 2 мест'),
     images: z.array(fileSchema.nullable()),
+    approved: z.boolean()
 })
 
 export type Route = z.infer<typeof routeSchema>

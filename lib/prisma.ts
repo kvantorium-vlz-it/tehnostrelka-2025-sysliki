@@ -1,198 +1,281 @@
 import { PrismaClient } from '@prisma/client';
 // import { useCurrentUser } from "~/composable/useCurrentUser";
-let userContext: { userId?: number } = {};
+// let userContext: { userId?: number } = {};
 
-export const setUserContext = (userId: number) => {
-  userContext = { userId };
-};
+// export const setUserContext = (userId: number) => {
+//   userContext = { userId };
+// };
 
-export const clearUserContext = () => {
-  userContext = {};
-};
+// export const clearUserContext = () => {
+//   userContext = {};
+// };
 
 
 const prisma = new PrismaClient().$extends({
-  
-  query: {
-   
-  
-    route:{
-      async update({ args, query }) {
-        if (!args.data.is_private) {
-          const oldRoute = await prisma.route.findUnique({
-            where: { id: args.where.id },
+  client: {
+    withUser(user: any) {
+      return prisma.$extends({
+        query: {
+         
+          route:{
             
-          });
-          await prisma.moder.create({
-            data:{
-              route_id:oldRoute!.id,
-              user_id:userContext.userId!
-            }
-          })
-          
-          return query(args)
-        }
-        const oldRoute = await prisma.route.findUnique({
-          where: { id: args.where.id },
-          
-        });
-
-        if (oldRoute) {
-          
-          await prisma.auditLog.create({
-            data: {
-              table_name:'route',
-              operation:'update',
-              record_id:oldRoute.id,
-              creater_id:userContext.userId!,
-              old_data:oldRoute,
-              new_data:args.data
+            async update({ args, query }) {
               
-            },
-          });
-        }
-
-        if (args.data.id) {
-          await prisma.route.update({
-            where:{
-              id:+args.data.id
-            },
-            data:{
-              approved:false
-            }
-          })
-        }
-
-        return query(args);
-      },
-
-    },
-    roultePlace:{
-
-      async update({ args, query }) {
-        
-          if (!args.data.route?.connect?.is_private) {
-            const oldRoute = await prisma.route.findUnique({
-              where: { id: args.where.id },
               
-            });
-           
-            await prisma.moder.create({
-              data:{
-                route_id:oldRoute!.id,
-                user_id:userContext.userId!
+              
+              
+              
+              if (!args.data.is_private) {
+                const oldRoute = await prisma.route.findUnique({
+                  where: { id: args.where.id },
+                  
+                });
+                const id = await prisma.moder.findMany({
+                  where:{
+                    route_id:oldRoute!.id,
+                    user_id:+user.yandexId
+                  },
+                  select:{
+                    id:true
+                  }
+                })
+                if (id) {
+                  await prisma.moder.deleteMany({
+                    where:{
+                      id:{ in: id.map((i) => i.id) }
+                    }
+                  })
+                  
+                }
+
+                await prisma.moder.create({
+                  data:{
+                    route_id:oldRoute!.id,
+                    user_id:+user.yandexId
+                  }
+                })
+                
+                
               }
-            })
-            
-            return query(args)
-          }
+              
+
+              const oldRoute = await prisma.route.findUnique({
+                where: { id: args.where.id },
+                
+              });
       
-        const oldRoultePlace = await prisma.roultePlace.findUnique({
-          where: { id: args.where.id },
-          
-        });
-
-        if (oldRoultePlace) {
-          
-          await prisma.auditLog.create({
-            data: {
-              table_name:'roultePlace',
-              operation:'update',
-              record_id:oldRoultePlace.id,
-              creater_id:userContext.userId!,
-              old_data:oldRoultePlace,
-              new_data:args.data
+              if (oldRoute) {
+                
+                await prisma.auditLog.create({
+                  data: {
+                    table_name:'route',
+                    operation:'update',
+                    record_id:oldRoute.id,
+                    creater_id:+user.yandexId,
+                    old_data:oldRoute,
+                    new_data:args.data
+                    
+                  },
+                });
+              }
+      
+              if (args.data.id) {
+                await prisma.route.update({
+                  where:{
+                    id:+args.data.id
+                  },
+                  data:{
+                    approved:false
+                  }
+                })
+              }
+      
+              return query(args);
+            },
+      
+          },
+          roultePlace:{
+      
+            async update({ args, query }) {
               
-            },
-          });
-        }
-
-        if (args.data.route?.connect?.id) {
-          
-          await prisma.route.update({
-            where:{
-              id:+args.data.route?.connect?.id
-            },
-            data:{
-              approved:false
-            }
-          })
-        }
-
-        return query(args);
-      }
-    },
-    image:{ 
-      async update({ args, query,  }) {
-
-        if (!args.data.route_image?.connect?.route?.is_private) {
-          const oldRoute = await prisma.route.findUnique({
-            where: { id: args.where.id },
+              const is_private = await prisma.route.findFirst({
+                where:{
+                  roulte_place:{
+                    some:{
+                      id: args.where.id 
+                    }
+                  }
+                },
+                select:{
+                  is_private:true
+                }
+              })
+              
+              if (is_private && !is_private?.is_private && is_private?.is_private!=undefined) {
+                  console.log(is_private);
+                  const oldRoute = await prisma.route.findUnique({
+                    where: { id: args.where.id },
+                    
+                  });
+                  
+                  const id = await prisma.moder.findMany({
+                    where:{
+                      route_id:oldRoute!.id,
+                      user_id:+user.yandexId
+                    },
+                    select:{
+                      id:true
+                    }
+                  })
+                  if (id) {
+                    await prisma.moder.deleteMany({
+                      where:{
+                        id:{ in: id.map((i) => i.id) }
+                      }
+                    })
+                    
+                  }
+                  await prisma.moder.create({
+                    data:{
+                      route_id:oldRoute!.id,
+                      user_id:+user.yandexId
+                    }
+                  })
+                  
+                  
+                }
             
-          });
-          // const { user } = useCurrentUser()
-          await prisma.moder.create({
-            data:{
-              route_id:oldRoute!.id,
-              user_id:userContext.userId!
+              const oldRoultePlace = await prisma.roultePlace.findUnique({
+                where: { id: args.where.id },
+                
+              });
+      
+              if (oldRoultePlace) {
+                
+                await prisma.auditLog.create({
+                  data: {
+                    table_name:'roultePlace',
+                    operation:'update',
+                    record_id:oldRoultePlace.id,
+                    creater_id:+user.yandexId,
+                    old_data:oldRoultePlace,
+                    new_data:args.data
+                    
+                  },
+                });
+              }
+      
+              if (args.data.route?.connect?.id) {
+                
+                await prisma.route.update({
+                  where:{
+                    id:+args.data.route?.connect?.id
+                  },
+                  data:{
+                    approved:false
+                  }
+                })
+              }
+      
+              return query(args);
             }
-          })
-          
-          return query(args)
-        }
-        if (!args.data.route_place_image?.connect?.route_place?.route?.is_private) {
-          const oldRoute = await prisma.route.findUnique({
-            where: { id: args.where.id },
-            
-          });
-          
-          await prisma.moder.create({
-            data:{
-              route_id:oldRoute!.id,
-              user_id:userContext.userId!
+          },
+          image:{ 
+            async update({ args, query,  }) {
+              const is_private = await prisma.route.findFirst({
+                where:{
+                  OR:[{
+                    route_image:{
+                      some:{
+                        image_id:args.where.id
+                      }
+                    },
+                    roulte_place:{
+                       some:{
+                        route_place_image:{
+                          some:{
+                            image_id:args.where.id
+                          }
+                        }
+                       }
+                    }
+                  }]
+                }
+              })
+              if (is_private && is_private.is_private!=undefined && !is_private.is_private) {
+                const oldRoute = await prisma.route.findUnique({
+                  where: { id: args.where.id },
+                  
+                });
+                
+                const id = await prisma.moder.findMany({
+                  where:{
+                    route_id:oldRoute!.id,
+                    user_id:+user.yandexId
+                  },
+                  select:{
+                    id:true
+                  }
+                })
+                if (id) {
+                  await prisma.moder.deleteMany({
+                    where:{
+                      id:{ in: id.map((i) => i.id) }
+                    }
+                  })
+                  
+                }
+                await prisma.moder.create({
+                  data:{
+                    route_id:oldRoute!.id,
+                    user_id:+user.yandexId
+                  }
+                })
+                
+                
+              }
+
+              
+              const oldImage = await prisma.image.findUnique({
+                where: { id: args.where.id },
+                
+              });
+      
+              if (oldImage) {
+                
+                await prisma.auditLog.create({
+                  data: {
+                    table_name:'image',
+                    operation:'update',
+                    record_id:oldImage.id,
+                    creater_id:+user.yandexId,
+                    old_data:oldImage,
+                    new_data:args.data
+                    
+                  },
+                });
+              }
+              if (args.data.route_image?.connect?.route?.id) {
+                
+                await prisma.route.update({
+                  where:{
+                    id:+args.data.route_image?.connect?.route?.id
+                  },
+                  data:{
+                    approved:false
+                  }
+                })
+              }
+      
+              return query(args);
             }
-          })
+          },
           
-          return query(args)
-        }
         
-        const oldImage = await prisma.image.findUnique({
-          where: { id: args.where.id },
-          
-        });
-
-        if (oldImage) {
-          
-          await prisma.auditLog.create({
-            data: {
-              table_name:'image',
-              operation:'update',
-              record_id:oldImage.id,
-              creater_id:userContext.userId!,
-              old_data:oldImage,
-              new_data:args.data
-              
-            },
-          });
-        }
-        if (args.data.route_image?.connect?.route?.id) {
-          
-          await prisma.route.update({
-            where:{
-              id:+args.data.route_image?.connect?.route?.id
-            },
-            data:{
-              approved:false
-            }
-          })
-        }
-
-        return query(args);
-      }
-    },
-    
-  
-  },
+        },
+        
+      })
+    }}
 
 });
 

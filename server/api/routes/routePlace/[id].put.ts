@@ -1,4 +1,4 @@
-import prisma, { clearUserContext, setUserContext } from "~/lib/prisma"
+import prisma from "~/lib/prisma"
 
 import { authUser } from "~/shared/utils/abilities"
 
@@ -11,11 +11,11 @@ interface Body {
 
 export default eventHandler(async(event) => {
     const { user } = await requireUserSession(event)
-    setUserContext(+user.yandexId)
-    if (authUser) {
+    // setUserContext(+user.yandexId)
+    
         const {name, description, lot, lat} = await readBody<Body>(event)
         const id = +getRouterParam(event, 'id')!
-        const rewriteRoutePlace =  await prisma.roultePlace.update({
+        const rewriteRoutePlace =  await prisma.withUser(user).roultePlace.update({
             where:{
                 id:+id,
                 route:{
@@ -30,7 +30,7 @@ export default eventHandler(async(event) => {
             }
         })
 
-        clearUserContext()
+        // clearUserContext()
         return rewriteRoutePlace
-    }
+    
 })
