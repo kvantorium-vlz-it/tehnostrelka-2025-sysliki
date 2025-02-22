@@ -1,19 +1,12 @@
+import { Place } from "~/assets/ts/zod/route"
 import prisma from "~/lib/prisma"
 
-import { authUser } from "~/shared/utils/abilities"
 
-interface Body {
-    name: string
-    description: string
-    lot: number
-    lat: number
-}
 
 export default eventHandler(async(event) => {
     const { user } = await requireUserSession(event)
-    // setUserContext(+user.yandexId)
     
-        const {name, description, lot, lat} = await readBody<Body>(event)
+        const {name, description, lot, lat} = await readBody<Place>(event)
         const id = +getRouterParam(event, 'id')!
         const rewriteRoutePlace =  await prisma.withUser(user).roultePlace.update({
             where:{
@@ -30,7 +23,7 @@ export default eventHandler(async(event) => {
             }
         })
 
-        // clearUserContext()
+       
         return rewriteRoutePlace
     
 })

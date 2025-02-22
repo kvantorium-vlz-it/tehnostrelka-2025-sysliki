@@ -1,18 +1,16 @@
 
+import { Favorites } from "~/assets/ts/zod/favorites"
 import prisma from "~/lib/prisma"
 
 
 
-interface Body { 
-    route_id: number 
-    user_id: number
-}
+
 
 
 export default eventHandler(async(event) => {
     const { user } = await requireUserSession(event)
 
-        const {route_id} = await readBody<Body>(event)
+        const {route_id} = await readBody<Favorites>(event)
 
         const newFavorit = await prisma.favorites.create({
             data:{

@@ -1,44 +1,22 @@
 
 
+import { Route } from "~/assets/ts/zod/route";
 import prisma from "~/lib/prisma";
-import { authUser } from "~/shared/utils/abilities";
 
 
 
-interface Body {
-    route_id: number
-    creater_id: number
-    name: string
-    description: string
-    privateRoute: boolean
-    approved: boolean
-    places: [{
-      name: string
-      description: string
-      lot: number
-      lat: number
-      images: {
-        src: string
-        alt: string
-      }[]
-    }]
-    images:{
-      src: string
-      alt: string
-    }[]
-    city: string
-  }
+
   
 export default eventHandler(async(event)=>{ 
 
   const { user } = await requireUserSession(event)
 
-  const {route_id} = await readBody<Body>(event)
+  const {route_id} = await readBody<Route>(event)
 
     
   const ids =  await prisma.route.findUnique({
     where:{
-      id:+route_id,
+      id:+route_id!,
       creater_id:+user.yandexId,
     },
         
@@ -61,7 +39,7 @@ export default eventHandler(async(event)=>{
   })
   await prisma.route.delete({
     where:{
-      id:+route_id
+      id:+route_id!
     }
   }) 
 

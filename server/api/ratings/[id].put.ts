@@ -1,16 +1,13 @@
 
+import { Rating } from "~/assets/ts/zod/rating"
 import prisma from "~/lib/prisma"
 
 
-interface Body{
-    value: number
-    route_id: number
-}
 
 export default eventHandler(async(event) => {
     const { user } = await requireUserSession(event)
     
-    const {value,route_id} = await readBody<Body>(event)
+    const {value,route_id} = await readBody<Rating>(event)
     const id = +getRouterParam(event, 'id')!
     const rewriteRating =  await prisma.rating.update({
         where:{

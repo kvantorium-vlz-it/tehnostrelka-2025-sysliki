@@ -21,6 +21,7 @@ const cityExistsCheck = z.custom<number>((data) => prisma.city.findUnique({
 }), { message: 'Города не существует в базе данных' })
 
 export const routeSchema = z.object({
+    route_id: z.number().optional(),
     name: z.string(),
     description: z.string(),
     privateRoute: z.boolean(),
@@ -31,3 +32,5 @@ export const routeSchema = z.object({
 })
 
 export type Route = z.infer<typeof routeSchema>
+export type Place = z.infer<typeof placeSchema>
+

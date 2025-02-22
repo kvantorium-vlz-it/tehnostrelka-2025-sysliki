@@ -1,16 +1,14 @@
 
+import { Visited } from "~/assets/ts/zod/visited"
 import prisma from "~/lib/prisma"
-import { authUser } from "~/shared/utils/abilities"
 
 
 
-interface Body{
-    route_id: number
-}
+
 export default eventHandler(async(event) => {
     const { user } = await requireUserSession(event)
 
-    const {route_id} = await readBody<Body>(event)
+    const {route_id} = await readBody<Visited>(event)
 
 
     const id = await prisma.visited.findFirst({
@@ -25,7 +23,7 @@ export default eventHandler(async(event) => {
     if (id) {
         await prisma.visited.delete({
             where:{
-            id:+id
+            id:+id.id
             }
         }) 
     }

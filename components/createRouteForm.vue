@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ServerFile } from 'nuxt-file-storage';
 import type { Route } from '~/assets/ts/zod/route';
-// import type { GeoJson } from '~/assets/ts/geoJson'
+
 import GeoJsonToGpx from "@dwayneparton/geojson-to-gpx"
 import JSZip from "jszip"
 import type { FeatureCollection, LineString } from "geojson";
@@ -9,7 +9,6 @@ import type { LngLat } from '@yandex/ymaps3-types';
 
 // @ts-ignore
 import tokml from "geojson-to-kml"
-import type { FeatureClickEvents } from '@yandex/ymaps3-types/imperative/YMapFeature/types';
 
 const points = ref<LngLat[]>([
     [44.685846951952776, 48.78107863881559],
@@ -17,11 +16,7 @@ const points = ref<LngLat[]>([
     [44.81012978886684, 48.772909916504],
     [44.7311655554684, 48.74657938243983],
   ])
-// function pontsInput() {
 
-//     points.value.map((ponit) => route.places.push({ images: [], lat: ponit[0], lot:ponit[1]  }))
-// // }
-// watch(points, pontsInput)
 
 const routeLine = ref<LngLat[]>([])
 
@@ -43,10 +38,10 @@ const route = reactive<Route>({
     name: '',
     places: [],
     privateRoute: true,
-    approved:false
+    approved:false,
 })
 
-// function geoJson() {
+
     watch(points, () => {
     route.places = points.value.map((coords, index) => ({
     name: `Точка ${index + 1}`,
@@ -108,8 +103,7 @@ function createGoe(){
         filename = name;
     } else if (format === "kmz") {
         const zip = new JSZip();               
-    zip.file("doc.kml", tokml(geojsonData)); // Добавляем KML в архив
-
+    zip.file("doc.kml", tokml(geojsonData));
     zip.generateAsync({ type: "blob" }).then((blob) => {
         const link = document.createElement("a");   
         link.href = URL.createObjectURL(blob);   
@@ -158,10 +152,7 @@ const handleSubmit = async () => {
         //     console.error(error.response._data.message.map((error) => error.message).join(', '))
         // },
     })
-    console.log(response);
-    
-
-    // console.log(response)
+ 
 }
 </script>
 

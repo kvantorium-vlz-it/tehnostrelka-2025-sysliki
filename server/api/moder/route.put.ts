@@ -5,7 +5,7 @@ import { adminUser } from "~/shared/utils/abilities"
 
 export default eventHandler(async(event) => {
     
-    const  {user}  = await requireUserSession(event)
+    // const  {user}  = await requireUserSession(event)
     
 
     if (adminUser) {
