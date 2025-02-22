@@ -10,15 +10,23 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@dwayneparton/geojson-to-gpx": "^0.2.0",
     "@prisma/client": "^6.2.1",
     "@prisma/nuxt": "^0.3.0",
+    "geojson": "^0.5.0",
+    "geojson-to-kml": "^0.0.1",
+    "jszip": "^3.10.1",
     "nuxt": "^3.15.3",
     "nuxt-auth-utils": "^0.5.10",
     "nuxt-authorization": "^0.3.3",
     "nuxt-file-storage": "^0.2.9",
     "prisma": "^6.2.1",
-    "vue": "latest",
-    "vue-router": "latest",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0",
+    "vue-yandex-maps": "^2.1.6",
     "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/geojson": "^7946.0.16"
   }
 }

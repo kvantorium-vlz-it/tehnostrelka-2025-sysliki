@@ -1,21 +1,15 @@
 
+import { Coment } from "~/assets/ts/zod/coment";
 import prisma from "~/lib/prisma";
 
 
 
-// import { user } from "~/use.vue";
-
-
-interface Body{
-    text: string
-    route_id: number
-}
 
 export default eventHandler(async(event) =>{
     const { user } = await requireUserSession(event)
 
 
-        const {text, route_id} = await readBody<Body>(event)
+        const {text, route_id} = await readBody<Coment>(event)
 
         const newComent = await prisma.coments.create({
             data:{
