@@ -77,18 +77,18 @@ const prisma = new PrismaClient().$extends({
                     
                   },
                 });
-              }
-      
-              if (args.data.id) {
                 await prisma.route.update({
                   where:{
-                    id:+args.data.id
+                    id:oldRoute.id
                   },
                   data:{
                     approved:false
                   }
                 })
               }
+      
+             
+              
       
               return query(args);
             },
@@ -111,13 +111,13 @@ const prisma = new PrismaClient().$extends({
                 }
               })
               
+              const oldRoute = await prisma.route.findFirst({
+                where: { roulte_place:{some:{id:}}  },
+                
+              });
+              
               if (is_private && !is_private?.is_private && is_private?.is_private!=undefined) {
                   console.log(is_private);
-                  const oldRoute = await prisma.route.findUnique({
-                    where: { id: args.where.id },
-                    
-                  });
-                  
                   const id = await prisma.moder.findMany({
                     where:{
                       route_id:oldRoute!.id,
@@ -147,6 +147,13 @@ const prisma = new PrismaClient().$extends({
             
               const oldRoultePlace = await prisma.roultePlace.findUnique({
                 where: { id: args.where.id },
+                include:{
+                  route:{
+                    select:{
+                      id:true
+                    }
+                  }
+                }
                 
               });
       
@@ -165,17 +172,17 @@ const prisma = new PrismaClient().$extends({
                 });
               }
       
-              if (args.data.route?.connect?.id) {
+             
                 
                 await prisma.route.update({
                   where:{
-                    id:+args.data.route?.connect?.id
+                    id:oldRoute?.id
                   },
                   data:{
                     approved:false
                   }
                 })
-              }
+              
       
               return query(args);
             }
@@ -202,11 +209,34 @@ const prisma = new PrismaClient().$extends({
                   }]
                 }
               })
+              const oldRoute = await prisma.image.findUnique({
+                where: { id: args.where.id },
+                include:{
+                  route_image:{
+                    include:{
+                      route:{
+                         select:{
+                          id:true
+                         }
+                      }
+                    }
+                  },
+                  route_place_image:{
+                    include:{
+                      route_place:{
+                        include:{
+                          route:{
+                            select:{
+                              id:true
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              });
               if (is_private && is_private.is_private!=undefined && !is_private.is_private) {
-                const oldRoute = await prisma.route.findUnique({
-                  where: { id: args.where.id },
-                  
-                });
                 
                 const id = await prisma.moder.findMany({
                   where:{
@@ -255,17 +285,17 @@ const prisma = new PrismaClient().$extends({
                   },
                 });
               }
-              if (args.data.route_image?.connect?.route?.id) {
+              
                 
                 await prisma.route.update({
                   where:{
-                    id:+args.data.route_image?.connect?.route?.id
+                    id:oldRoute?.id
                   },
                   data:{
                     approved:false
                   }
                 })
-              }
+              
       
               return query(args);
             }

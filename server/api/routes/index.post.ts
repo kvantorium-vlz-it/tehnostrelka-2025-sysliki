@@ -14,7 +14,6 @@ const body = await readBody<Route>(event)
 const parseResult = routeSchema.safeParse(body)
 
 
-
 if (!parseResult.success) {
     throw createError({
         status: 500,
