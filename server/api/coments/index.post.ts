@@ -1,22 +1,15 @@
-import { useCurrentUser } from "~/composable/useCurrentUser";
+
+import { Coment } from "~/assets/ts/zod/coment";
 import prisma from "~/lib/prisma";
-import { authUser } from "~/shared/utils/abilities";
 
 
-// import { user } from "~/use.vue";
 
-
-interface Body{
-    text: string
-    route_id: number
-}
 
 export default eventHandler(async(event) =>{
-        const { user } = useCurrentUser()
+    const { user } = await requireUserSession(event)
 
-    if (authUser) {
 
-        const {text, route_id} = await readBody<Body>(event)
+        const {text, route_id} = await readBody<Coment>(event)
 
         const newComent = await prisma.coments.create({
             data:{
@@ -28,6 +21,6 @@ export default eventHandler(async(event) =>{
         })
 
         return newComent
-    }
+    
 
 })

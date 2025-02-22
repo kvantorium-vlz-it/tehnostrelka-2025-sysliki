@@ -10,22 +10,6 @@ export default defineOAuthYandexEventHandler({
     },
     
     async onSuccess(event, { user, tokens }) {
-        await setUserSession(event, {
-            user: {
-                
-                real_name: user.real_name,
-                yandexId: user.id,
-                username: user.login,
-                
-                is_admin: !! await prisma.userAdmin.findUnique({
-                    where:{
-                        id:+user.id
-                    }
-                })
-            },
-            loggedInAt: new Date()
-        })
-
         const existeduser = await prisma.user.findUnique({
             where:{
                 id:+user.id
@@ -41,6 +25,22 @@ export default defineOAuthYandexEventHandler({
             }
         })
         }
+        await setUserSession(event, {
+            user: {
+                
+                real_name: user.real_name,
+                yandexId: user.id,
+                username: user.login,
+                
+                is_admin: !! await prisma.userAdmin.findUnique({
+                    where:{
+                        user_id:+user.id
+                    }
+                })
+            },
+            loggedInAt: new Date()
+        })
+
 
         
 

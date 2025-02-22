@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
-  modules: ['nuxt-auth-utils', '@prisma/nuxt', 'nuxt-authorization'],
+  modules: ['nuxt-auth-utils', '@prisma/nuxt', 'nuxt-authorization', 'nuxt-file-storage', 'vue-yandex-maps/nuxt'],
   runtimeConfig: {
     oauth: {
       // provider in lowercase (github, google, etc.)
@@ -11,6 +11,11 @@ export default defineNuxtConfig({
         clientSecret:  process.env.YANDEX_CLIENT_SECRET
       }
     }
-  }
-
+  },
+  fileStorage: {
+    mount: './public/images/',
+  },
+  yandexMaps: {
+    apikey: 'b0fd084b-e4c3-478b-ac9b-3a9ad6094fb6',
+  },
 })

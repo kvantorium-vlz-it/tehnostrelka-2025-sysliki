@@ -1,24 +1,18 @@
-import { useCurrentUser } from "~/composable/useCurrentUser"
+import { Place } from "~/assets/ts/zod/route"
 import prisma from "~/lib/prisma"
-import { authUser } from "~/shared/utils/abilities"
 
-interface Body {
-    name: string
-    description: string
-    lot: number
-    lat: number
-}
+
 
 export default eventHandler(async(event) => {
-    const { user } = useCurrentUser()
-    if (authUser) {
-        const {name, description, lot, lat} = await readBody<Body>(event)
+    const { user } = await requireUserSession(event)
+    
+        const {name, description, lot, lat} = await readBody<Place>(event)
         const id = +getRouterParam(event, 'id')!
-        const rewriteRoutePlace =  await prisma.roultePlace.update({
+        const rewriteRoutePlace =  await prisma.withUser(user).roultePlace.update({
             where:{
                 id:+id,
                 route:{
-                    creater_id:user.yandexId
+                    creater_id:+user.yandexId
                 }
             },
             data:{
@@ -29,6 +23,7 @@ export default eventHandler(async(event) => {
             }
         })
 
+       
         return rewriteRoutePlace
-    }
+    
 })

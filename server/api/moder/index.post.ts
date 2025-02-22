@@ -1,22 +1,19 @@
-import { useCurrentUser } from "~/composable/useCurrentUser"
+
+import { Moder } from "~/assets/ts/zod/moder"
 import prisma from "~/lib/prisma"
-import { authUser } from "~/shared/utils/abilities"
-// import { user } from "~/use.vue"
 
-interface Body{
-    route_id: number
-}
+
+
 export default eventHandler(async(event) => {
-    const { user } = useCurrentUser()
+    const { user } = await requireUserSession(event)
 
-    if (authUser) {
-        const {route_id} =  await readBody<Body>(event)
+        const {route_id} =  await readBody<Moder>(event)
 
         const newModer = await prisma.moder.create({
             data:{
-                user_id:user.yandexId,
+                user_id:+user.yandexId,
                 route_id 
             }
         })
-    }
+    
 })
