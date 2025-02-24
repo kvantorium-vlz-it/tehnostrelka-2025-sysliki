@@ -37,10 +37,10 @@
         <div v-if="modereted?.length < 1"><h1 style="justify-content: center; display: flex; color: brown;">неть путей на модерацию</h1></div>
         <h1 v-else>{{modereted?.length}} путь на модерацию</h1>
         <div v-for="moder in modereted">
-            <div>
-                <h3>route№{{ moder.route_id }}</h3>
+            <div style="display: block; border: solid black 1px; border-radius: 20px; padding: 1%;">
+                <h3>route №{{ moder.route_id }}</h3>
+                <h3>user №{{ moder.user_id }}</h3>
                 <hr>
-                <h3>user№{{ moder.user_id }}</h3>
                 <button  @click="approved(moder.route_id)">проверено</button>
 
             </div>
