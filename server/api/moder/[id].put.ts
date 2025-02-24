@@ -30,10 +30,7 @@ export default eventHandler(async(event) => {
         })
         
         
-        return rewriteRoute
-
-        console.log();
-        
+        return rewriteRoute        
     }
     
 

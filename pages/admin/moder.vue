@@ -33,8 +33,9 @@
 
 <template>
     <Can :ability="adminUser">
-        <div v-if="modereted?.length < 1"><h1>нету путей на модерацию</h1></div>
-        <h1 v-else>{{modereted?.length}} путей на модерацию</h1>
+        <button @click="reloadData()">обновить</button>
+        <div v-if="modereted?.length < 1"><h1 style="justify-content: center; display: flex; color: brown;">неть путей на модерацию</h1></div>
+        <h1 v-else>{{modereted?.length}} путь на модерацию</h1>
         <div v-for="moder in modereted">
             <div>
                 <h3>route№{{ moder.route_id }}</h3>

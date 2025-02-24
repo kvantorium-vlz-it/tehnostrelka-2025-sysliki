@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { date } from 'zod';
 // import { useCurrentUser } from "~/composable/useCurrentUser";
 // let userContext: { userId?: number } = {};
 
@@ -14,6 +15,26 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient().$extends({
   client: {
     withUser(user: any) {
+      async  function moder(oldRoute:any) {
+          const id = await prisma.moder.findMany({
+            where:{
+              route_id:oldRoute!.id,
+              user_id:+user.yandexId
+            },
+            select:{
+              id:true
+            }
+          })
+          if (id) {
+            await prisma.moder.deleteMany({
+              where:{
+                id:{ in: id.map((i) => i.id) }
+              }
+            })
+            
+          }
+          
+        }
       return prisma.$extends({
         query: {
          
@@ -26,27 +47,12 @@ const prisma = new PrismaClient().$extends({
               
               
               if (!args.data.is_private) {
+
                 const oldRoute = await prisma.route.findUnique({
                   where: { id: args.where.id },
                   
                 });
-                const id = await prisma.moder.findMany({
-                  where:{
-                    route_id:oldRoute!.id,
-                    user_id:+user.yandexId
-                  },
-                  select:{
-                    id:true
-                  }
-                })
-                if (id) {
-                  await prisma.moder.deleteMany({
-                    where:{
-                      id:{ in: id.map((i) => i.id) }
-                    }
-                  })
-                  
-                }
+                moder(oldRoute)
 
                 await prisma.moder.create({
                   data:{
@@ -56,6 +62,12 @@ const prisma = new PrismaClient().$extends({
                 })
                 
                 
+              }else{
+                const oldRoute = await prisma.route.findUnique({
+                  where: { id: args.where.id },
+                  
+                });
+                moder(oldRoute)
               }
               
 
@@ -82,7 +94,8 @@ const prisma = new PrismaClient().$extends({
                     id:oldRoute.id
                   },
                   data:{
-                    approved:false
+                    approved:false,
+                    updated_at:new Date().toString()
                   }
                 })
               }
@@ -112,29 +125,12 @@ const prisma = new PrismaClient().$extends({
               })
               
               const oldRoute = await prisma.route.findFirst({
-                where: { roulte_place:{some:{id:}}  },
+                where: { roulte_place:{some:{id:args.where.id}}  },
                 
               });
               
               if (is_private && !is_private?.is_private && is_private?.is_private!=undefined) {
-                  console.log(is_private);
-                  const id = await prisma.moder.findMany({
-                    where:{
-                      route_id:oldRoute!.id,
-                      user_id:+user.yandexId
-                    },
-                    select:{
-                      id:true
-                    }
-                  })
-                  if (id) {
-                    await prisma.moder.deleteMany({
-                      where:{
-                        id:{ in: id.map((i) => i.id) }
-                      }
-                    })
-                    
-                  }
+                  moder(oldRoute)
                   await prisma.moder.create({
                     data:{
                       route_id:oldRoute!.id,
@@ -143,6 +139,8 @@ const prisma = new PrismaClient().$extends({
                   })
                   
                   
+                }else{
+                  moder(oldRoute)
                 }
             
               const oldRoultePlace = await prisma.roultePlace.findUnique({
@@ -179,7 +177,9 @@ const prisma = new PrismaClient().$extends({
                     id:oldRoute?.id
                   },
                   data:{
-                    approved:false
+                    approved:false,
+                    updated_at:new Date().toString()
+
                   }
                 })
               
@@ -236,25 +236,11 @@ const prisma = new PrismaClient().$extends({
                   }
                 }
               });
+
+
               if (is_private && is_private.is_private!=undefined && !is_private.is_private) {
                 
-                const id = await prisma.moder.findMany({
-                  where:{
-                    route_id:oldRoute!.id,
-                    user_id:+user.yandexId
-                  },
-                  select:{
-                    id:true
-                  }
-                })
-                if (id) {
-                  await prisma.moder.deleteMany({
-                    where:{
-                      id:{ in: id.map((i) => i.id) }
-                    }
-                  })
-                  
-                }
+                moder(oldRoute)
                 await prisma.moder.create({
                   data:{
                     route_id:oldRoute!.id,
@@ -263,6 +249,8 @@ const prisma = new PrismaClient().$extends({
                 })
                 
                 
+              }else{
+                moder(oldRoute)
               }
 
               
@@ -292,7 +280,8 @@ const prisma = new PrismaClient().$extends({
                     id:oldRoute?.id
                   },
                   data:{
-                    approved:false
+                    approved:false,
+                    updated_at:new Date().toString()
                   }
                 })
               
