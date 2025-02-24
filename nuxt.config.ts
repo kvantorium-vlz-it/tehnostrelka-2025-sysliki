@@ -19,6 +19,12 @@ export default defineNuxtConfig({
       }
     }
   },
+  components: [
+    {
+      path: '@/components',
+      pathPrefix: false,
+    }
+  ],
   fileStorage: {
     mount: './public/images/',
   },
