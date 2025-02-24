@@ -22,7 +22,7 @@ export default defineNuxtConfig({
   fileStorage: {
     mount: './public/images/',
   },
-  css: ['@/asets/Index.css'],
+  css: ['@/assets/Index.css'],
   yandexMaps: {
     apikey: 'b0fd084b-e4c3-478b-ac9b-3a9ad6094fb6',
   },
