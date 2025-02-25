@@ -188,6 +188,24 @@ const handleSubmit = async () => {
                     <input type="number" v-model.number="points[placeIndex][0]"  placeholde="lat">
                     <input type="number" v-model.number="points[placeIndex][1]"  placeholde="lot">
                 </div> -->
+                <GeolocationPlaces
+                    v-model:lat="place.lat"
+                    v-model:lot="place.lot"
+                    :radius="300"
+                    #="{fetchPlaces, places}"
+                
+                >
+                    <button type="button" @click="fetchPlaces">получить ближайшие места</button>
+
+
+                    <div v-for="place in places">
+                        <div style="border: 1px solid black; border-radius: 20px; padding: 5px;">
+                            {{ JSON.stringify(place, null, 4) }}
+                        </div>
+
+
+                    </div>
+                </GeolocationPLaces>
 
                 <div>
                     <imageInputForm @update="(files) => place.images = files"/>
@@ -208,7 +226,7 @@ const handleSubmit = async () => {
             Отправить
         </button>
         
-        {{ route }}
+        <!-- {{ route }} -->
     </form>
     <button @click="download('gpx')">Скачать GPX</button>
     <button @click="download('kml')">Скачать KML</button>
