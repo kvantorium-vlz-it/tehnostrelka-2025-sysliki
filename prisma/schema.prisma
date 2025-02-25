@@ -103,7 +103,7 @@ model RouteImage {
  
 model Moder { 
   id       Int @id @default(autoincrement()) 
-  route_id Int 
+  route_id Int  
   user_id  Int 
  
   route Route @relation(fields: [route_id], references: [id],onDelete: Cascade) 

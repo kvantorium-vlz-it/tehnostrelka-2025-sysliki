@@ -6,11 +6,18 @@ import type { RulerCommonState, RulerPointState, UpdateEndFn } from '@yandex/yma
 import type { RenderPointArgs } from '@yandex/ymaps3-types/modules/ruler/YMapRuler';
 import type { DrawingStyle, LngLat, LngLatBounds, RouteFeature, YMapMarkerEventHandler, ZoomRange } from '@yandex/ymaps3-types';
 
+// import { useGeolocation } from '@vueuse/core'
+
+const { coords, locatedAt, error, resume, pause } = useGeolocation()
+
+
 const map = shallowRef<YMap | null>(null);
 
 const state = shallowRef<RenderPointArgs[]>([]);
 const mode = ref<YandexMapRulerSettings['type']>('ruler');
 const editable = ref(true);
+
+
 
 const points = defineModel<LngLat[]>('points', {
     default: () => [],
@@ -36,7 +43,7 @@ defineEmits<{
             :settings="{
                 location: {
                     center: [44.516975,48.707067],
-                    zoom:9
+                    zoom:14
                 },
                 showScaleInCopyrights: true,
                 zoomRange: {
@@ -112,5 +119,6 @@ defineEmits<{
         <button @click="() => $emit('renderRoute')">
             Построить маршрут
         </button>
+
     </div>
 </template>

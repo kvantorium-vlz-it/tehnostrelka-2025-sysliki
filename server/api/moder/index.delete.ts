@@ -21,7 +21,7 @@ export default eventHandler(async(event) => {
         if (id) {
             await prisma.moder.delete({
                 where:{
-                    id:+id
+                    id:id.id
                 }
             }) 
         }
