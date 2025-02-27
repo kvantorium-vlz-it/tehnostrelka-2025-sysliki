@@ -14,7 +14,6 @@ const body = await readBody<Route>(event)
 const parseResult = routeSchema.safeParse(body)
 
 
-
 if (!parseResult.success) {
     throw createError({
         status: 500,
@@ -51,7 +50,7 @@ const { city_id, name, description, privateRoute,  places, images } = route
       creater_id:+user.yandexId,
       name,
       description,
-      is_private: privateRoute || false,
+      is_private: privateRoute,
       city_id,
 
       roulte_place: {
@@ -91,7 +90,7 @@ const { city_id, name, description, privateRoute,  places, images } = route
     },
   })
 
-  if (privateRoute) {
+  if (!privateRoute) {
     await prisma.moder.create({
       data:{
         route_id:newRoute.id,
