@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@dwayneparton/geojson-to-gpx": "^0.2.0",
+    "@nuxt/icon": "^1.10.3",
     "@prisma/client": "^6.2.1",
     "@prisma/nuxt": "^0.3.0",
     "@vueuse/components": "^12.7.0",
@@ -24,6 +25,7 @@
     "nuxt-authorization": "^0.3.3",
     "nuxt-file-storage": "^0.2.9",
     "prisma": "^6.2.1",
+    "radix-vue": "^1.9.16",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0",
     "vue-yandex-maps": "^2.1.6",
