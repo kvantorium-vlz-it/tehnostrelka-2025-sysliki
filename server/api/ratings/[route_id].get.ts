@@ -4,11 +4,13 @@ import { guest } from "~/shared/utils/abilities";
 
     export default eventHandler(async (event) =>{
         if (guest) {
-            const route_id = +getRouterParam(event, 'route_id')!
-    
+
+
+            const route_id = +getRouterParam(event, 'id')!
+
             const ratings = await prisma.rating.findMany({
                 where: {
-                    route_id: +route_id
+                    route_id: route_id
                 },
                 select:{
                     value:true
