@@ -65,7 +65,7 @@ const { city_id, name, description, privateRoute,  places, images } = route
                 image:{
 
                   create:{ 
-                    src: image.src,
+                    src: '/images/'+image.src,
                     alt: image.alt,
                     }
                     
@@ -80,7 +80,7 @@ const { city_id, name, description, privateRoute,  places, images } = route
         create: images.map((image) => ({
           image: {
             create: {
-              src: image.src,
+              src: '/images/'+image.src,
               alt: image.alt,
             }
           }
@@ -99,7 +99,7 @@ const { city_id, name, description, privateRoute,  places, images } = route
     })
     
   }
-  return newRoute
+  // return newRoute
 
   
 }

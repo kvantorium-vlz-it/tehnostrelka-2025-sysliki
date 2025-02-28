@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Righteous&display=swap');
+@font-face {
+    font-family: 'Gothic60';
+    src: url(/assets/fonts/Gothic60-Regular.otf);
+    
+}
+
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Gothic60;
+}
+
+:root {
+    font-size: 10px;
+}

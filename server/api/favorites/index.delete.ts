@@ -3,17 +3,32 @@ import prisma from "~/lib/prisma"
 
 
 interface Body{
-    id: number
+    route_id: number
 }
 
 export default eventHandler(async(event) => {
     const { user } = await requireUserSession(event)
 
-        const {id} = await readBody<Body>(event)
-        await prisma.favorites.delete({
+        const {route_id} = await readBody<Body>(event)
+
+        const id = await prisma.favorites.findFirst({
             where:{
-                id,
-                user_id:user.yandexId         
+                route_id,
+                user_id:+user.yandexId
+            },
+            include:{
+                route:{
+                    select:{
+                        id:true
+                    }
+                }
+            }
+        })
+
+        await prisma.favorites.deleteMany({
+            where:{
+                id:id?.id,
+                user_id:+user.yandexId         
             }
         })
     

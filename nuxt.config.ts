@@ -9,6 +9,8 @@ export default defineNuxtConfig({
     'nuxt-file-storage',
     'vue-yandex-maps/nuxt',
     '@vueuse/nuxt',
+    '@nuxt/icon',
+    'radix-vue/nuxt',
   ],
   runtimeConfig: {
     oauth: {
@@ -22,7 +24,12 @@ export default defineNuxtConfig({
   fileStorage: {
     mount: './public/images/',
   },
+  css: ['@/assets/css/index.css'],
   yandexMaps: {
     apikey: 'b0fd084b-e4c3-478b-ac9b-3a9ad6094fb6',
   },
+  components: {
+    path: '~/components',
+    pathPrefix: false
+  }
 })

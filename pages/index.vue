@@ -1,41 +1,50 @@
 <script setup lang="ts">
-  import { authUser } from '@/shared/utils/abilities'
+import type { LngLat } from '@yandex/ymaps3-types';
+import type { FeatureCollection, LineString } from "geojson";
+
+const { data: cities } = await useAsyncData('cities', async () => await $fetch('/api/getAll/city'))
 
 
+const cityId = ref('' + cities.value[0].id) 
 
-  const { loggedIn, user, session, fetch, clear } = useUserSession()
-  
-  
 
-  const a = ref(true)
-  
+const bestRoute = await $fetch(`/api/bestRoute/${cityId.value}`,{
+    method:'GET'
+})
+
+const points = ref<LngLat[]>([
+  ])
+
+
+const routeLine = ref<LngLat[]>([])
+
+const joinedPointsToString = computed(() => points.value.map((point) => point.toReversed().join(',')).join('|'))
+
+const fetchRoute = async () => {
+  const response = await $fetch<FeatureCollection>(`https://api.geoapify.com/v1/routing?waypoints=${joinedPointsToString.value}&mode=walk&type=short&apiKey=c09299584a5e46fab02a6b984e1a1aa5`)
+
+  const coordinates = response.features[0].geometry.coordinates 
+  const _points = coordinates.reduce((_c, __c) => [..._c, ...__c], []) as LngLat[]
+
+  routeLine.value = _points
+}
+
+
 </script>
 
 <template>
-  <favoritesForm
-    @mark-as-favorite="() => console.log('Избранное')"
-    @remove-from-favorite="() => console.log('Не избранное')"
-    @toggle-favorite="(isFav) => console.log('Переключение', isFav)"
-    v-model="a"
-  />
- 
-  <div v-if="loggedIn">
-    <h1>Welcome {{ user?.real_name}}!</h1>
-    <p>Logged in since {{ session.loggedInAt  }}    </p>
-    <div>
-          loggedIn: <pre>{{ JSON.stringify(loggedIn) }}</pre>
-          user: <pre>{{ JSON.stringify(user, null, 2) }}</pre>
-          <!-- session: <pre>{{ JSON.stringify(session, null, 2) }}</pre> -->
-    </div>
-    <button @click="clear">Logout</button>
+    <TheHeader v-model:selected-city-id="cityId" />
     
-  </div>
-  <div v-else>
-    <h1>Not logged in</h1>
-      <NuxtLink external to="/api/auth/yandex">Yandex</NuxtLink>
-    </div>
-  
-  <Can :ability="authUser">
-    <createRouteForm/>
-  </Can>
+    <TheHero :best-route="bestRoute" />
+    <InformationCards style="margin-top: 16.2rem;"/>
+
+    <routeMapPlace
+      style="margin-top: 2rem;"
+        v-model:points="points"
+        v-model:route-points="routeLine"
+        @render-route="fetchRoute"
+    />
+    <RoutesList 
+      :city_id="+cityId"
+      style="margin-top: 2rem;"/>
 </template>

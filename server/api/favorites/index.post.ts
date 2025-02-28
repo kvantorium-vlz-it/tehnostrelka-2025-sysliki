@@ -12,13 +12,24 @@ export default eventHandler(async(event) => {
 
         const {route_id} = await readBody<Favorites>(event)
 
-        const newFavorit = await prisma.favorites.create({
-            data:{
+        const isFav = await prisma.favorites.findFirst({
+            where:{
                 route_id,
                 user_id:+user.yandexId
             }
-
         })
+        if (!isFav) {
+            
+        
+
+            const newFavorit = await prisma.favorites.create({
+                data:{
+                    route_id,
+                    user_id:+user.yandexId
+                }
+
+            })
+        }
     
 
 })

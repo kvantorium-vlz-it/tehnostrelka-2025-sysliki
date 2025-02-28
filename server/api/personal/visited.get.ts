@@ -6,7 +6,9 @@ export default eventHandler(async(event) => {
 
         const route_public = await prisma.route.findMany({
             where:{
-                visited:{}, //как будто так
+                visited: {
+                    some: {}
+                }, //как будто так
                 creater_id:+user.yandexId
             },
             include:{

@@ -22,6 +22,12 @@
         `)
         })
         places.value = result
+        // console.log(result.elements);
+        
+    }
+
+    async function clear() {
+        places.value = []
     }
 </script>
 
@@ -29,6 +35,7 @@
     <slot
         :fetchPlaces="fetchPlaces"
         :places="places"
+        :clear="clear"
     />
 
 </template>
