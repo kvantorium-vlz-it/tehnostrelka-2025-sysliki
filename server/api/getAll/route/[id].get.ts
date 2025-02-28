@@ -1,15 +1,22 @@
+import { ref } from "vue"
 import prisma from "~/lib/prisma"
 import { guest } from "~/shared/utils/abilities"
 
 
 
-export default eventHandler(async() => {
+export default eventHandler(async(event) => {
+    
+    
     
     if (guest) {
+        const id = +getRouterParam(event, 'id')!
         const route_public = await prisma.route.findMany({
             where:{
                 is_private:false,
-                approved:true
+                approved:true,
+                city:{
+                    id:id
+                }
             },
             include:{
                 visited:true,
@@ -25,9 +32,11 @@ export default eventHandler(async() => {
                 },
                 route_image:{
                     include:{image:true}
-                }
+                },
+                _count:true
             }
         })
+ 
         return route_public
     }
 })  

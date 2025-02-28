@@ -65,7 +65,7 @@ const { city_id, name, description, privateRoute,  places, images } = route
                 image:{
 
                   create:{ 
-                    src: image.src,
+                    src: 'images/'+image.src,
                     alt: image.alt,
                     }
                     

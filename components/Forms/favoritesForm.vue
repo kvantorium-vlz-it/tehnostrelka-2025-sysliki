@@ -5,6 +5,8 @@
             v-model="isFavorite"
             @change="handleInput"
         >
+        <Icon name="mdi:bookmark-outline" />
+        <Icon name="mdi:bookmark" />
     </div>
 </template>
 

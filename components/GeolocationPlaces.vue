@@ -22,6 +22,8 @@
         `)
         })
         places.value = result
+        // console.log(result.elements);
+        
     }
 </script>
 

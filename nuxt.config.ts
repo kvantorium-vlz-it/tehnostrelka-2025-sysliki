@@ -10,6 +10,7 @@ export default defineNuxtConfig({
     'vue-yandex-maps/nuxt',
     '@vueuse/nuxt',
     '@nuxt/icon',
+    'radix-vue/nuxt',
   ],
   runtimeConfig: {
     oauth: {
@@ -27,4 +28,8 @@ export default defineNuxtConfig({
   yandexMaps: {
     apikey: 'b0fd084b-e4c3-478b-ac9b-3a9ad6094fb6',
   },
+  components: {
+    path: '~/components',
+    pathPrefix: false
+  }
 })

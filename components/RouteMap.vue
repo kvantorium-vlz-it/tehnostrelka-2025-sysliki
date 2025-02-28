@@ -17,8 +17,6 @@ const state = shallowRef<RenderPointArgs[]>([]);
 const mode = ref<YandexMapRulerSettings['type']>('ruler');
 const editable = ref(true);
 
-
-
 const points = defineModel<LngLat[]>('points', {
     default: () => [],
 })
@@ -30,16 +28,24 @@ const onUpdateRuler = (state: RulerCommonState) => {
     points.value = state.points
 }
 
-defineEmits<{
+const emit = defineEmits<{
     (e: 'renderRoute'): void
+    (e: 'addPoint'): void
 }>()
+
+watch(state, (newValue, oldValue) => {
+    if (newValue.length > oldValue.length) {
+        emit('addPoint')
+    }
+})
+
 </script>
 
 <template>
-    <div>
+    <Container>
         <yandex-map
             v-model="map"
-            style="height: 500px;"
+            style="height: 800px;"
             :settings="{
                 location: {
                     center: [44.516975,48.707067],
@@ -47,7 +53,7 @@ defineEmits<{
                 },
                 showScaleInCopyrights: true,
                 zoomRange: {
-                    min: 12,
+                    min: 4,
                     max: 25,
                 }
             }"
@@ -114,11 +120,11 @@ defineEmits<{
             }"
         />
         </yandex-map>
-        {{ points }}
+        <!-- {{ points }} -->
 
         <button @click="() => $emit('renderRoute')">
             Построить маршрут
         </button>
 
-    </div>
+    </Container>
 </template>
