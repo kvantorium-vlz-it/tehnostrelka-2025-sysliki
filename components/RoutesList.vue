@@ -12,7 +12,7 @@ watch(reactiveProps.city_id, async () => {
     routes.value =  await $fetch(`/api/getAll/route/${props.city_id}`)
     routes.value.map(async(v:any)=>{
             try {
-                v._count.rating =  await $fetch(`/api/ratings/${v.id}`,{
+                v._count.rating =  await $fetch(`/api/ratings/rat/${v.id}`,{
                     method:'GET',
                     
                 }) 

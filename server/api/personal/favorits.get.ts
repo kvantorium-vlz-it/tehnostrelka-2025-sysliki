@@ -1,4 +1,3 @@
-
 import prisma from "~/lib/prisma"
 
 export default eventHandler(async(event) => {
@@ -6,7 +5,7 @@ export default eventHandler(async(event) => {
 
         const route_public = await prisma.route.findMany({
             where:{
-                visited: {
+                favorites: {
                     some: {}
                 }, //как будто так
                 creater_id:+user.yandexId

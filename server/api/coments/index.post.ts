@@ -14,9 +14,8 @@ export default eventHandler(async(event) =>{
         const newComent = await prisma.coments.create({
             data:{
                 text,
-                route_id,
-                user_id:user.yandexId
-
+                route_id: +route_id,
+                user_id: +user.yandexId
             }
         })
 

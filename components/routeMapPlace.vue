@@ -52,11 +52,11 @@ defineEmits<{
             :settings="{
                 location: {
                     center: [coords.longitude,coords.latitude],
-                    zoom:14
+                    zoom:18
                 },
                 showScaleInCopyrights: true,
                 zoomRange: {
-                    min: 4,
+                    min: 18,
                     max: 25,
                 },
                 

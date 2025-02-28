@@ -14,25 +14,25 @@ defineProps<{
         <div class="profile-area">
             <section class="menu">
                 <section class="user-inf-area">
-                    <img src="../public/pics/userphoto.svg" class="userphoto">
+                    <img src="/pics/userphoto.svg" class="userphoto">
                     <p class="username-title">{{username}}</p>
                 </section>
                 <section class="tab-menu-area">
                     <NuxtLink to="/">
                         <button class="tab-menu-area-button">
-                            <img src="../public/pics/home-icon.svg" class="home-icon">
+                            <img src="/pics/home-icon.svg" class="home-icon">
                             <p class="tab-menu-area-title">главная</p>
                         </button>
                     </NuxtLink>
                     <NuxtLink to="/profile/help">
                         <button class="tab-menu-area-button">
-                            <img src="../public/pics/question-icon.svg" class="question-icon">
+                            <img src="/pics/question-icon.svg" class="question-icon">
                             <p class="tab-menu-area-title">вопросы и ответы</p>
                         </button>
                     </NuxtLink>
                 </section>
                 <section class="end"><button @click="clear" class="tab-menu-area-button">
-                    <img src="../public/pics/exit-icon.svg" class="exit-icon">
+                    <img src="/pics/exit-icon.svg" class="exit-icon">
                     <p  class="tab-menu-area-title">выйти</p>
                 </button></section>
 

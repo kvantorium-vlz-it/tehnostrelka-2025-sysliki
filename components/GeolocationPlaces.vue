@@ -25,12 +25,17 @@
         // console.log(result.elements);
         
     }
+
+    async function clear() {
+        places.value = []
+    }
 </script>
 
 <template>
     <slot
         :fetchPlaces="fetchPlaces"
         :places="places"
+        :clear="clear"
     />
 
 </template>

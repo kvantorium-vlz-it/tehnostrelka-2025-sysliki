@@ -8,15 +8,8 @@ import type { LngLat } from '@yandex/ymaps3-types';
 
 // @ts-ignore
 import tokml from "geojson-to-kml"
-import { Link } from '#components';
 
-
-const { data: cities } = await useAsyncData('cities', async () => await $fetch('/api/getAll/city'))
-
-const cityId = ref('' + cities.value[0].id)
-
-
-const points = ref<LngLat[]>([])
+const route_id = useRoute().params.route_id
 const routeLine = ref<LngLat[]>([])
 const joinedPointsToString = computed(() => points.value.map((point) => point.toReversed().join(',')).join('|'))
 
@@ -29,28 +22,48 @@ const fetchRoute = async () => {
   routeLine.value = _points
 }
 
-const route = reactive<Route>({
-    city_id: +cityId.value,
-    description: '',
-    images: [],
-    name: '',
-    places: [],
-    privateRoute: true,
-    approved:false,
+onMounted(() => {
+    fetchRoute()
+
+    console.log(route.data.value);
+    
 })
-watch(points, () => {
-    route.places = points.value.map((coords, index) => ({
-    name: `Точка ${index + 1}`,
-    description: '',
-    lat: coords[1],
-    lot: coords[0],
-    images:[]
-  }));
-}, { deep: true }); 
+
+const route = await useAsyncData('route', async () => {
+    const _route = await $fetch<[Route]>(`/api/routes/my/${route_id}`,{
+        method:'GET'
+    })
+    // _route =  await $fetch(`/api/route/${props.route_id}`)
+    //   console.log(a);
+    
+    
+    
+    console.log(route_id);
+    
+    
+    
+    return _route?.[0]
+})
+
+const points = computed<LngLat[]>(() => {
+    return (route.data.value?.roulte_place || []).map((place) => [place.lot, place.lat])
+})
+
+// console.log(route_id);
+
+ const a = await $fetch(`/api/ratings/rat/${route_id}`,{method:'GET'})
+
+
+  
+// console.log(a);
+
+
+
+
 function createGoe(){
     const geojsonData  = reactive<FeatureCollection>({
         type: "FeatureCollection",
-        features: route.places.map((place) => ({
+        features: route.data.value!.roulte_place.map((place) => ({
         type:'Feature',
             geometry:{
                 type:'Point',
@@ -61,8 +74,6 @@ function createGoe(){
                 name: place.name,
                 description: place.description,
             }
-            
-    
         })),
 
     })
@@ -84,14 +95,14 @@ function createGoe(){
     function download(format:string) {
     let content, type, filename;
     const geojsonData = createGoe()
-   const name  = `${route.name}.${format}`
+   const name  = `${route.data.value?.name}.${format}`
     
     
     if (format === "gpx") {
         const serializer = new XMLSerializer();
         content = serializer.serializeToString(GeoJsonToGpx(geojsonData))
         type = "application/gpx+xml";
-        filename = route.name+'.gpx';
+        filename = route.data.value?.name+'.gpx';
     } else if (format === "kml") {
         content = tokml(geojsonData);
         type = "application/vnd.google-earth.kml+xml";
@@ -102,7 +113,7 @@ function createGoe(){
     zip.generateAsync({ type: "blob" }).then((blob) => {
         const link = document.createElement("a");   
         link.href = URL.createObjectURL(blob);   
-        link.download = route.name+`.kmz`;   
+        link.download = route.data.value?.name+`.kmz`;   
         link.click();   
         URL.revokeObjectURL(link.href);
     });
@@ -117,159 +128,231 @@ function createGoe(){
   link.click();
   URL.revokeObjectURL(link.href);
 };
-const handleSubmit = async () => {
-    
-    
-    await fetchRoute()
-    const response = await $fetch('/api/routes', {
-        method: 'POST',
-        body: route,
-        // onResponseError(error) {
-            //     console.error(error.response._data.message.map((error) => error.message).join(', '))
-            // },
+
+const addToVisited = async () => {
+    const visitedBefore = await $fetch('/api/personal/visited', {
+        method: 'get'
+    })
+    const isRouteVisitedBefore = visitedBefore.find((route) => route.id === +(route_id as string)) !== undefined
+
+    if (isRouteVisitedBefore) {
+        await $fetch('/api/visited', {
+            method: 'delete',
+            body: {
+                route_id: +route_id,
+            }
         })
-        navigateTo('/')
-    
- 
+    } else {
+        await $fetch('/api/visited', {
+            method: 'post',
+            body: {
+                route_id: +route_id,
+            }
+        })
+    }
 }
 
-const onAddPoint = () => {
+const addToFavorite = async() => {
+    const favoritsBefore = await $fetch('/api/personal/favorits', {
+        method: 'get'
+    })
+    const isRouteFavoritsBefore = favoritsBefore.find((route) => route.id === +(route_id as string)) !== undefined
+
+    if (isRouteFavoritsBefore) {
+        await $fetch('/api/favorites', {
+            method: 'delete',
+            body: {
+                route_id: +route_id,
+            }
+        })
+    } else {
+        await $fetch('/api/favorites', {
+            method: 'post',
+            body: {
+                route_id: +route_id,
+            }
+        })
+    }
 }
 
-const switchState = ref(true)
+const comments = await $fetch(`/api/coments/${route_id}`, {
+    method: 'get',
+})
+
+const comment = ref("")
+
+const sendComment = async () => {
+    await $fetch(`/api/coments`, {
+        method: 'post',
+        body: {
+            text: comment.value,
+            route_id: route_id,
+        }
+    })
+}
+
+const { loggedIn } = await useUserSession()
 </script>
 
 <template>
+
     <TheHeader v-model:selected-city-id="cityId" />
-    {{  }}
+    <!-- <pre>{{ JSON.stringify(points, null , 4) }}</pre> -->
     <div class="create-the-route-area">
         <section class="route-parameters-area">
             <div class="grow">
                 <section class="enter-the-parameter-global-area">
                     <div class="enter-the-parameter-area">
                         <label class="enter-the-parameter-title" for="route-name">название маршрута</label>
-                        <input v-model="route.name" placeholder="route name" type="text" class="enter-the-parameter-input main">
+                        <p  class="enter-the-parameter-input main">{{ route.data.value?.name }}</p>
                     </div>
                     <div  class="enter-the-parameter-area">
                         <label class="enter-the-parameter-title" for="route-description">описание маршрута</label>
-                        <input v-model="route.description" placeholder="route description" type="text" class="enter-the-parameter-input description">
+                        <p  class="enter-the-parameter-input description">{{ route.data.value?.description }}</p>
                     </div>
-                    <div>
-                        <imageInputForm @update="(files) => route.images = files"/>
-                    </div>
+    
+            <button @click="() => download('gpx')" class="route-reviews">
+                Скачать в gpx
+            </button>
+            <button @click="() => download('kml')" class="route-reviews">
+                Скачать в kml
+            </button>
+            <button @click="() => download('kmz')" class="route-reviews">
+                Скачать в kmz
+            </button>
+    
+            <div class="route-reviews">
+                {{ route.data.value!._count.coments }} отзывов
+            </div>
+            <div class="route-reviews-1">
+                Оценка: {{ a }} 
+            </div>
 
+            <div class="route-reviews">
+                <Icon name="mdi:eye-outline" />
+                {{ route.data.value!._count.visited }}
+            </div>
+            
+
+            <div class="route-favorites">
+                <Icon name="mdi:bookmark" />
+                {{ route.data.value!._count.favorites }}
+            </div>
                 </section>
-                <section class="public-parametr-area">
-                    <label class="public-parametr-title">приватный</label>
-                    <div class="public-parametr" :class="{ 'is-checked': !route.privateRoute }">
-                        <SwitchRoot  id="public" v-model:checked="route.privateRoute" class="switch-root" style="background: #89C587; border: none; border-radius: 2.5rem;">
-                            
-                            <SwitchThumb class="switch-thumb" />
-                        </SwitchRoot> 
-                        
-                    </div>
-                </section>
+          
+        
             </div>
             <section class="end">
-                <button @click="handleSubmit" class="tab-menu-area-button-green">
-                    <img src="../public/pics/save-in-icon.svg" class="save-in-icon">
+
+                <!-- <button class="tab-menu-area-button" onclick="history.go(-1)">
+                    
+                    <img src="~/public/pics/back-icon.svg" class="back-icon">
+                    <p class="tab-menu-area-title">история</p>
+                </button> -->
+
+                <button class="tab-menu-area-button-green" @click="addToFavorite">
+                    <Icon name="mdi:bookmark-outline"  class="save-in-icon" /> 
                     <p class="tab-menu-area-title white">сохранить</p>
                 </button>
+                <button class="tab-menu-area-button-green" @click="addToVisited">
+                    <Icon name="mdi:bookmark-outline" class="save-in-icon" /> 
+                    <p class="tab-menu-area-title white">Посетил</p>
+                </button>
                 <button class="tab-menu-area-button" onclick="history.go(-1)">
-                    <img src="../public/pics/back-icon.svg" class="back-icon">
+                    
+                    <img src="~/public/pics/back-icon.svg" class="back-icon">
                     <p class="tab-menu-area-title">вернуться назад</p>
                 </button>
             </section>
         </section>
 
         <section  >
-            <RouteMap
+            <routeMapWatch
             class="map-area"
             v-model:points="points"
             v-model:route-points="routeLine"
             @render-route="fetchRoute"
-            @add-point="onAddPoint"
+            
         />
         </section>
 
         <section class="add-points-area">
-            <div class="search-area">
+            <!-- <div class="search-area">
                 <p class="search-title"> Добавьте место а затем<br> выберите точку на карте</p>
-            </div>
+                <p class="search-title">или создайте <br> своё место</p>
+            </div> -->
+
             <ScrollAreaRoot class="scroll-area-root">
                 <ScrollAreaViewport class="add-points-scroll h-full overflow-hidden " style="height: 100%;">
-                    <div v-for="(place, placeIndex) in route.places" :key="placeIndex" class="test-swipe h-full">
-                        <input style="padding: 1.5rem 2rem;" type="text" v-model="place.name" :placeholder="`Название точки ${placeIndex}`">
-                        <input style="padding: 1.5rem 2rem;" type="text" v-model="place.description" :placeholder="`Описание точки ${placeIndex}`">
-
-                           <GeolocationPlaces
-                               v-model:lat="place.lat"
-                               v-model:lot="place.lot"
-                               :radius="300"
-                               #="{fetchPlaces, places: nearPlaces, clear}"
-                            >
-                               <button type="button" @click="fetchPlaces">получить ближайшие места</button>
-                       
-                               <div v-for="nearPlace in nearPlaces.elements?.filter((nearPlace) => 'name' in nearPlace.tags)">
-                                   <button
-                                        @click="() => {
-                                            place.name = nearPlace.tags.name
-                                            clear()
-                                        }"
-                                        style="border: 1px solid black; border-radius: 20px; padding: 5px;"
-                                    >
-                                       {{ nearPlace.tags.name }}
-                                   </button>
-                               </div>
-                           </GeolocationPLaces>
-       
-                           <div>
-                               <imageInputForm @update="(files) => place.images = files"/>
-                           </div>
-
-                       <!-- <AddPointBlock
+                    <div v-for="(place, placeIndex) in route.data.value?.roulte_place" :key="placeIndex" class="test-swipe h-full">
+                       <AddPointBlock
                         :name="place.name!"
                         :index="placeIndex + 1"
+                        :description="place.description"
+                        :images="place.route_place_image.map((routePlaceImage) => routePlaceImage.image.src)"
                        >
-                           
-                           <input type="text" v-model="place.name" :placeholder="`Place ${placeIndex} name`">
-                           <input type="text" v-model="place.description" :placeholder="`Place ${placeIndex} description`">
-                           <GeolocationPlaces
-                               v-model:lat="place.lat"
-                               v-model:lot="place.lot"
-                               :radius="300"
-                               #="{fetchPlaces, places}">
-                               <button type="button" @click="fetchPlaces">получить ближайшие места</button>
-                       
-                               <div v-for="place in places.elemets">
-                                   <div style="border: 1px solid black; border-radius: 20px; padding: 5px;">
-                                       {{ JSON.stringify(place, null, 4) }}
-                                   </div>
-                               </div>
-                           </GeolocationPLaces>
-       
-                           <div>
-                               <imageInputForm @update="(files) => place.images = files"/>
-                           </div>
-                    </AddPointBlock> -->
+                    </AddPointBlock>
                     </div>
-                    <!-- <AddNewPointBloc k></AddNewPointBlock> -->
+                    <!-- <AddNewPointBlock></AddNewPointBlock> -->
                  </ScrollAreaViewport>
                  <ScrollAreaScrollbar orientation="vertical">
                      <ScrollAreaThumb class="scroll-area-thumb" />
                 </ScrollAreaScrollbar>
             </ScrollAreaRoot>
         </section>
+
+        <div class="comments-section">
+            <div class="comments-section-heading">
+                Комментарии
+            </div>
+
+            <div style="background-color: #F5F5F5; padding: 2rem" v-if="loggedIn">
+                <input type="text" v-model="comment" style="padding: 2rem; border: 1px solid #F5F5F5;">
+
+                <button @click="sendComment" style="background-color: #89C587; padding: 2rem;">
+                    Оставить комментарий
+                </button>
+            </div>
+
+            <div class="comments-list">
+                <div v-for="comment in comments" class="comment" >
+                    {{ comment.text }}
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
 <style scoped>
+.route-reviews {
+    font-size: 1.6rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #0000008e;
+}
+.route-favorites {
+    font-size: 1.6rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #00000086;
+}
+.route-reviews-1 {
+    border-radius: 100vw;
+    background-color: #89C587;
+    color: white;
+    font-size: 1.5rem;
+    padding: 0.5rem 1rem;
+    width: fit-content;
+}
 *{
     Border-radius: 2.5rem;
     Border: none;
 }
     .save-in-icon{
-        width: 3rem;
+        /* width: 3rem; */
+        font-size: 3rem;
     }
     .back-icon{
         width: 2.4rem;
@@ -354,6 +437,7 @@ const switchState = ref(true)
         background-color: #F5F5F5;
         padding: 2rem;
         border-radius: 2.5rem;
+        max-width: 32rem;
     }
 
     .map-area{
@@ -367,7 +451,7 @@ const switchState = ref(true)
 
     .create-the-route-area{
         width: 100vw;
-        height: 75rem;
+        /* height: 75rem; */
         margin-bottom: 5.2rem;
         padding-left: 4rem;
         padding-right: 4rem;
@@ -388,8 +472,8 @@ const switchState = ref(true)
         width: 100%;
         border-radius: 0rem;
         outline: none;
-        border: 0.1rem solid transparent;
-        border-bottom: 2px dashed #000000;
+        /* border: 0.1rem solid transparent; */
+        /* border-bottom: 2px dashed #000000; */
     }
     .grow{
         flex-grow: 1;
@@ -474,4 +558,24 @@ const switchState = ref(true)
         flex-direction: column;
         gap: 0.5rem;
     }
+
+.comments-section {
+    margin-top: 7.6rem;
+}
+.comments-section-heading {
+    font-size: 6.4rem;
+    color: #000000;
+}
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 4rem;
+}
+.comment {
+    padding: 2rem;
+    background-color: #F5F5F5;
+    border-radius: 2rem;
+    font-size: 2rem;
+}
 </style>

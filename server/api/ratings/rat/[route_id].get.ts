@@ -6,7 +6,7 @@ import { guest } from "~/shared/utils/abilities";
         if (guest) {
 
 
-            const route_id = +getRouterParam(event, 'id')!
+            const route_id = +getRouterParam(event, 'route_id')!
 
             const ratings = await prisma.rating.findMany({
                 where: {

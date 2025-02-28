@@ -4,7 +4,6 @@ import prisma from "~/lib/prisma"
 
 export default eventHandler(async (event) => {
     const city_id = +getRouterParam(event, 'city_id')!
-
     
     const routes = await prisma.route.findMany({
         where:{
@@ -25,7 +24,7 @@ export default eventHandler(async (event) => {
     })
     const rating = ref()
     try {
-        rating.value =  await $fetch(`/api/ratings/${routes[0].id}`,{
+        rating.value =  await $fetch(`/api/ratings/rat/${routes[0].id}`,{
             method:'GET',
 
         })

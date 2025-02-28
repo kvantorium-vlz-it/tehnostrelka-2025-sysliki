@@ -1,18 +1,18 @@
-
 import prisma from "~/lib/prisma"
+import { guest } from "~/shared/utils/abilities"
 
 export default eventHandler(async(event) => {
-    const { user } =await requireUserSession(event)
+    if (guest) {
+        
+        const id = +getRouterParam(event, 'id')!
 
-        const route_public = await prisma.route.findMany({
-            where:{
-                visited: {
-                    some: {}
-                }, //как будто так
-                creater_id:+user.yandexId
+        const route = await prisma.route.findMany({
+            where: {
+                is_private:false,
+                approved:true,
+                id: +id,
             },
             include:{
-                city:true,
                 visited:true,
                 rating:true,
                 roulte_place:{
@@ -26,9 +26,12 @@ export default eventHandler(async(event) => {
                 },
                 route_image:{
                     include:{image:true}
-                }
+                },
+                _count:true
             }
+        
         })
-        return route_public
-    
+
+        return route
+     }
 })

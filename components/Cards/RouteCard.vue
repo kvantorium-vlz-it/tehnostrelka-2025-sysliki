@@ -37,12 +37,12 @@ const a = ref()
 
 <template>
     <div class="route">
-        <favoritesForm
+        <!-- <favoritesForm
             @mark-as-favorite=""
             @remove-from-favorite=""
             @toggle-favorite="(isFav) => fethFav(route.id)"
             v-model="a"
-        />
+        /> -->
 
         
             
@@ -81,7 +81,7 @@ const a = ref()
             <img :src="route.src" alt="" class="route-map-image">
         </div>
         
-        <NuxtLink :to="`/route/${route.id}/`" class="route-button">
+        <NuxtLink :to="`/wathcRoute/${route.id}`" class="route-button">
             Посмотреть маршрут
         </NuxtLink>
     </div>

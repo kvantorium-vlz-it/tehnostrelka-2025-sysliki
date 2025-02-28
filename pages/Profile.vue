@@ -1,14 +1,14 @@
 <script setup lang="ts">
      const { loggedIn, user, session, fetch, clear } = useUserSession()
 
+const myRoutes = await $fetch(`/api/my/${user.value?.yandexId}/routes`, {
+    method: 'get'
+})
 </script>
 
 <template>
+    <TheHeader />
     <div v-if="loggedIn">
-
-        <TheHeader />
-        
-        
         <div class="body">
                 <Profile :username="user?.real_name || user?.username" />
                 <div class="inprofile-area">
@@ -29,7 +29,7 @@
                     </div>
                 </div>
     
-                <TabsRoot class="inf-block" default-value="routes" @value-change="updateTitle">
+                <TabsRoot class="inf-block" default-value="routes">
                     <TabsList class="inf-block-menu-area">
                         <h4 class="inf-block-second-title">мои</h4>
                         <div class="inf-block-tab-menu-area">
@@ -66,25 +66,34 @@
                         </div>
                     </TabsList> -->
                     <TabsContent value="routes" class="tab-content">
-                        <CardMyRouteCard />
-                        <CardMyRouteCard />
-                        <CardMyRouteCard />
-                        <CardMyRouteCard />
-                        <CardMyRouteCard />
+                        <NuxtLink
+                            v-for="route in myRoutes"
+                            :to="`/wathcRoute/my/${route.id}`"
+                            style="text-decoration: none;"
+                        >
+                            <MyRouteCard
+                                :route="{
+                                    favorites: route._count.favorites,
+                                    reviewsCount: route._count.coments,
+                                    name: route.name,
+                                    visited: route._count.visited,
+                                    rating: (route.rating.reduce((result, value) => result + value.value, 0) / route.rating.length) || 0
+                                }"
+                            />
+                        </NuxtLink>
                     </TabsContent>
                     <TabsContent value="coments" class="tab-content">
+                        <!-- <CardMyCommentCard />
                         <CardMyCommentCard />
                         <CardMyCommentCard />
                         <CardMyCommentCard />
-                        <CardMyCommentCard />
-                        <CardMyCommentCard />
+                        <CardMyCommentCard /> -->
                     </TabsContent>
                     <TabsContent value="saveds" class="tab-content">
                         
                     </TabsContent>
                 </TabsRoot>
             </div>
-        <TheFooter />
     </div>
     <div v-else>
         <NuxtLink external to="/api/auth/yandex">залогиньтесь</NuxtLink>
